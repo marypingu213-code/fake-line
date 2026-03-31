@@ -1,1 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <!-- 針對平板/手機的關鍵設定：確保寬度符合裝置，並禁止使用者雙擊縮放，讓體驗更像 App -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>大螢幕展示系統 - 會話練習</title>
+    <!-- 使用 Tailwind CSS 快速排版 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 隱藏滾動條，讓電視展示更乾淨美觀，但保留滾動功能 */
+        body {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+            /* 避免長按選取文字 */
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        body::-webkit-scrollbar {
+            display: none; /* Chrome, Safari and Opera */
+        }
+        
+        /* 點擊時的簡單動畫效果 */
+        .touch-card {
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        .touch-card:active {
+            transform: scale(0.96);
+        }
+        
+        /* 聊天訊息進場動畫 */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up {
+            animation: fadeInUp 0.3s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white h-screen w-screen overflow-hidden flex flex-col font-sans">
+    
+    <!-- 頂部資訊列 -->
+    <header class="p-6 md:p-8 lg:p-10 flex justify-between items-center bg-gray-800 shadow-md border-b border-gray-700">
+        <h1 class="text-3xl md:text-5xl lg:text-6xl font-bold tracking-wider">資訊儀表板</h1>
+        <div class="flex items-center gap-6">
+            <!-- 大時鐘 -->
+            <div id="clock" class="text-4xl md:text-6xl lg:text-7xl font-mono text-cyan-400 font-bold tracking-widest">00:00:00</div>
+            
+            <!-- 全螢幕切換按鈕 -->
+            <button id="fullscreenBtn" class="p-4 md:p-6 bg-gray-700 hover:bg-gray-600 active:bg-gray-500 rounded-2xl transition-colors cursor-pointer touch-card shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 md:h-12 md:w-12 lg:h-14 lg:w-14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                </svg>
+            </button>
+        </div>
+    </header>
 
+    <!-- 主內容區 -->
+    <main class="flex-1 p-6 md:p-8 lg:p-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8 lg:gap-12 overflow-y-auto">
+        
+        <!-- 卡片 1：天氣/狀態資訊 -->
+        <div class="bg-gray-800 rounded-3xl p-8 lg:p-12 shadow-xl border border-gray-700 flex flex-col justify-center items-center text-center touch-card cursor-pointer">
+            <div class="text-yellow-400 mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 md:h-32 md:w-32 lg:h-40 lg:w-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+            </div>
+            <h2 class="text-5xl md:text-7xl font-bold">28°C</h2>
+            <p class="text-2xl md:text-4xl text-gray-400 mt-4">室內溫度適宜</p>
+        </div>
+
+        <!-- 卡片 2：公告區 -->
+        <div class="bg-blue-900 rounded-3xl p-8 lg:p-12 shadow-xl border border-blue-700 flex flex-col justify-center touch-card cursor-pointer xl:col-span-2">
+            <h2 class="text-4xl md:text-6xl font-bold mb-8 text-blue-200">系統公告</h2>
+            <ul class="space-y-6 text-2xl md:text-4xl lg:text-5xl text-blue-100 leading-tight">
+                <li class="flex items-start gap-4">
+                    <span class="mt-3 h-4 w-4 md:h-6 md:w-6 flex-shrink-0 rounded-full bg-blue-400"></span> 
+                    <span>歡迎使用智慧展示系統</span>
+                </li>
+                <li class="flex items-start gap-4">
+                    <span class="mt-3 h-4 w-4 md:h-6 md:w-6 flex-shrink-0 rounded-full bg-blue-400"></span> 
+                    <span>本介面已針對平板觸控與電視顯示進行最佳化</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 卡片 3：互動按鈕 -->
+        <button class="bg-green-700 hover:bg-green-600 active:bg-green-800 rounded-3xl p-8 lg:p-12 shadow-xl border border-green-600 flex flex-col justify-center items-center text-center touch-card cursor-pointer w-full">
+            <div class="text-white mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 md:h-32 md:w-32 lg:h-40 lg:w-40" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                </svg>
+            </div>
+            <h2 class="text-4xl md:text-6xl font-bold">開始簡報</h2>
+            <p class="text-xl md:text-3xl text-green-200 mt-4">點擊此處播放內容</p>
+        </button>
+
+        <!-- 卡片 4：大型互動按鈕 -->
+        <button class="bg-cyan-700 hover:bg-cyan-600 active:bg-cyan-800 rounded-3xl p-8 lg:p-12 shadow-xl border border-cyan-600 flex flex-col justify-center items-center text-center touch-card cursor-pointer w-full md:col-span-2 xl:col-span-1">
+            <h2 class="text-5xl md:text-7xl font-bold text-white mb-6">觸控區</h2>
+            <p class="text-2xl md:text-4xl text-cyan-100">支援多點觸控</p>
+        </button>
+
+        <!-- 卡片 5：虛擬 LINE 對話練習窗 -->
+        <div class="rounded-3xl shadow-2xl border-4 border-gray-700 flex flex-col overflow-hidden bg-white w-full h-[600px] lg:h-[700px] md:col-span-2 xl:col-span-2">
+            <!-- LINE 標題列 -->
+            <div class="bg-[#06C755] text-white p-4 md:p-6 flex items-center justify-between shadow-sm z-10">
+                <div class="flex items-center gap-4">
+                    <svg class="w-8 h-8 md:w-10 md:h-10 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    <span class="font-bold text-2xl md:text-4xl tracking-wide">會話練習</span>
+                </div>
+                <div class="flex gap-6">
+                    <svg class="w-8 h-8 md:w-10 md:h-10 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    <svg class="w-8 h-8 md:w-10 md:h-10 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </div>
+            </div>
+            
+            <!-- 聊天內容區 -->
+            <div class="flex-1 bg-[#749DB8] p-4 md:p-8 overflow-y-auto flex flex-col gap-6 scroll-smooth" id="chatBox">
+                <!-- 日期 -->
+                <div class="text-center my-2">
+                    <span class="bg-black/20 text-white text-sm md:text-xl px-4 py-2 rounded-full backdrop-blur-sm">今天</span>
+                </div>
+                
+                <!-- 初始提示訊息 -->
+                <div class="flex gap-4 items-start animate-fade-in-up">
+                    <div class="w-12 h-12 md:w-16 md:h-16 rounded-full bg-gray-100 flex-shrink-0 flex items-center justify-center text-3xl md:text-4xl shadow-md border-2 border-white">🎓</div>
+                    <div class="flex flex-col gap-1">
+                        <span class="text-white text-lg md:text-xl drop-shadow-md ml-1">系統提示</span>
+                        <div class="bg-white text-black p-4 md:p-5 rounded-3xl rounded-tl-none max-w-[85%] shadow-md text-xl md:text-3xl leading-relaxed">
+                            您好！這裡是會話練習專區。<br>請輸入文字後，使用下方的<span class="font-bold text-gray-600">「對方」</span>或<span class="font-bold text-[#06C755]">「自己」</span>按鈕來模擬雙方對話。
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 輸入區 (改為雙向發送) -->
+            <div class="bg-gray-100 p-4 md:p-6 flex gap-3 md:gap-4 items-center border-t border-gray-300">
+                <!-- 作為對方發送按鈕 -->
+                <button class="bg-gray-400 hover:bg-gray-500 text-white rounded-2xl px-4 py-3 md:px-6 md:py-4 transition-colors flex-shrink-0 shadow-md active:scale-95 flex flex-col items-center justify-center" id="chatSendLeftBtn">
+                    <span class="text-lg md:text-2xl font-bold">👤 對方</span>
+                </button>
+                
+                <!-- 文字輸入框 -->
+                <input type="text" class="flex-1 bg-white rounded-full px-6 py-4 md:py-5 outline-none text-black text-xl md:text-3xl shadow-inner border border-gray-200 focus:border-[#06C755] transition-colors" placeholder="輸入對話..." id="chatInput">
+                
+                <!-- 作為自己發送按鈕 -->
+                <button class="bg-[#06C755] hover:bg-[#05a546] text-white rounded-2xl px-4 py-3 md:px-6 md:py-4 transition-colors flex-shrink-0 shadow-md active:scale-95 flex flex-col items-center justify-center" id="chatSendRightBtn">
+                    <span class="text-lg md:text-2xl font-bold">我 💬</span>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- 1. 時間更新邏輯 ---
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('zh-TW', { 
+                hour12: false, 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit' 
+            });
+            document.getElementById('clock').textContent = timeString;
+        }
+        setInterval(updateTime, 1000);
+        updateTime(); 
+
+        // --- 2. 全螢幕控制邏輯 ---
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        fullscreenBtn.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen();
+                } else if (document.documentElement.webkitRequestFullscreen) { 
+                    document.documentElement.webkitRequestFullscreen();
+                } else if (document.documentElement.msRequestFullscreen) { 
+                    document.documentElement.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) { 
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) { 
+                    document.msExitFullscreen();
+                }
+            }
+        });
+
+        // --- 3. 避免平板上的右鍵選單 (選用) ---
+        window.addEventListener('contextmenu', function (e) { 
+            if(e.target.tagName !== 'INPUT') { // 允許輸入框出現選單(如貼上)
+                e.preventDefault(); 
+            }
+        }, false);
+
+        // --- 4. 虛擬 LINE 雙向會話練習邏輯 ---
+        const chatInput = document.getElementById('chatInput');
+        const chatSendLeftBtn = document.getElementById('chatSendLeftBtn');
+        const chatSendRightBtn = document.getElementById('chatSendRightBtn');
+        const chatBox = document.getElementById('chatBox');
+
+        function addChatMessage(text, isSelf) {
+            if (!text.trim()) return;
+            
+            const msgDiv = document.createElement('div');
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('zh-TW', { hour12: false, hour: '2-digit', minute: '2-digit' });
+
+            if (isSelf) {
+                // 自己送出的綠色氣泡 (靠右)
+                msgDiv.className = 'flex gap-3 items-end justify-end mt-2 animate-fade-in-up';
+                msgDiv.innerHTML = `
+                    <div class="flex flex-col items-end text-sm md:text-lg text-gray-200 mb-2">
+                        <span>已讀</span>
+                        <span>${timeStr}</span>
+                    </div>
+                    <div class="bg-[#85E249] text-black p-4 md:p-5 rounded-3xl rounded-tr-none max-w-[75%] shadow-md text-xl md:text-3xl leading-relaxed break-words">
+                        ${text}
+                    </div>
+                `;
+            } else {
+                // 對方送出的白色氣泡 (靠左)
+                msgDiv.className = 'flex gap-4 items-start mt-2 animate-fade-in-up';
+                msgDiv.innerHTML = `
+                    <div class="w-12 h-12 md:w-16 md:h-16 rounded-full bg-gray-100 flex-shrink-0 flex items-center justify-center text-3xl md:text-4xl shadow-md border-2 border-white">👤</div>
+                    <div class="flex flex-col gap-1 w-full">
+                        <span class="text-white text-lg md:text-xl drop-shadow-md ml-1">學生/對方</span>
+                        <div class="bg-white text-black p-4 md:p-5 rounded-3xl rounded-tl-none max-w-[85%] shadow-md text-xl md:text-3xl leading-relaxed break-words">
+                            ${text}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            chatBox.appendChild(msgDiv);
+            
+            // 延遲一點點確保 DOM 渲染後再滾動到最底端
+            setTimeout(() => {
+                chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
+            }, 50);
+        }
+
+        // 處理發送動作 (isSelf 決定是哪一邊)
+        function handleSendChat(isSelf) {
+            const text = chatInput.value;
+            if (text) {
+                addChatMessage(text, isSelf);
+                chatInput.value = '';
+                chatInput.focus();
+            }
+        }
+
+        // 綁定左邊按鈕 (作為對方/學生)
+        chatSendLeftBtn.addEventListener('click', () => handleSendChat(false));
+        
+        // 綁定右邊按鈕 (作為自己/老師)
+        chatSendRightBtn.addEventListener('click', () => handleSendChat(true));
+        
+        // 綁定 Enter 鍵 (預設為自己發送)
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleSendChat(true);
+            }
+        });
+    </script>
+</body>
+</html>
