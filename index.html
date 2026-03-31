@@ -19,6 +19,20 @@
             -webkit-user-select: auto;
         }
 
+        /* 自訂表情選單的滾動條，讓其稍微可見但美觀 */
+        #emojiPicker::-webkit-scrollbar {
+            display: block;
+            width: 6px;
+        }
+        #emojiPicker::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 8px;
+        }
+        #emojiPicker::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 8px;
+        }
+
         /* 聊天氣泡的小尾巴 */
         .bubble-left::before {
             content: "";
@@ -74,7 +88,7 @@
             </div>
             
             <div class="flex items-center gap-4 md:gap-6 flex-shrink-0">
-                <!-- 載入 Icon (取代原本的筆記) -->
+                <!-- 載入 Icon -->
                 <label class="cursor-pointer touch-active" title="載入對話紀錄">
                     <input type="file" id="uploadFile" class="hidden" accept=".json">
                     <svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
@@ -84,7 +98,6 @@
                 
                 <!-- 群組人員 / 鎖定狀態 Icon -->
                 <div id="memberBtn" class="touch-active cursor-pointer relative" onclick="handleMemberBtnClick()" title="選擇發言人">
-                    <!-- 預設顯示群組 Icon，鎖定時會替換成頭像 -->
                     <svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                 </div>
                 
@@ -117,29 +130,30 @@
 
                 <input type="text" id="chatInput" class="w-full bg-transparent outline-none text-base md:text-xl" placeholder="輸入訊息...">
                 
-                <!-- 標記 2: Emoji 按鈕 -->
+                <!-- Emoji 按鈕 -->
                 <svg id="emojiBtn" class="w-6 h-6 md:w-8 md:h-8 text-gray-400 cursor-pointer ml-1 flex-shrink-0 hover:text-yellow-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 
-                <!-- 表情貼圖彈出視窗 -->
-                <div id="emojiPicker" class="hidden absolute bottom-[120%] right-0 bg-white rounded-2xl shadow-xl border border-gray-200 p-3 w-64 md:w-80 z-50 animate-pop-in">
-                    <div id="emojiGrid" class="grid grid-cols-6 gap-3 text-2xl md:text-3xl text-center"></div>
+                <!-- 擴充版：表情貼圖彈出視窗 (加入高度限制與滾動條) -->
+                <div id="emojiPicker" class="hidden absolute bottom-[120%] right-0 bg-white rounded-2xl shadow-xl border border-gray-200 p-3 w-72 md:w-96 h-80 overflow-y-auto z-50 animate-pop-in">
+                    <div id="emojiGrid" class="grid grid-cols-6 md:grid-cols-8 gap-3 text-2xl md:text-3xl text-center"></div>
                 </div>
             </div>
             
-            <!-- 標記 3: 發送 / 麥克風按鈕 -->
+            <!-- 發送 / 麥克風按鈕 -->
             <button id="sendBtn" class="text-gray-500 hover:text-[#06C755] touch-active flex-shrink-0 p-1 transition-colors relative">
                 <svg id="micIcon" class="w-7 h-7 md:w-9 md:h-9 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
                 <svg id="planeIcon" class="w-7 h-7 md:w-9 md:h-9 hidden text-[#06C755]" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path></svg>
             </button>
         </div>
 
-        <!-- 標記 1: 虛擬鍵盤容器 (預設隱藏) -->
+        <!-- 虛擬鍵盤容器 (改為注音 ㄅㄆㄇ 版面，分為 11 欄) -->
         <div id="virtualKeyboard" class="hidden bg-[#D1D5DB] p-2 md:p-4 flex-col gap-1 md:gap-2 shadow-[inset_0_4px_6px_-1px_rgba(0,0,0,0.1)] z-20">
             <div class="flex justify-between items-center mb-1 px-1">
-                <span class="text-xs text-gray-600 font-bold">自訂虛擬鍵盤 (輔助無觸控螢幕使用)</span>
+                <span class="text-xs text-gray-600 font-bold">注音虛擬鍵盤 (輔助拼音使用，選字建議使用系統鍵盤或語音)</span>
                 <button id="vkClose" class="text-gray-700 bg-gray-200 px-3 py-1 rounded-lg shadow border border-gray-300 text-sm active:bg-gray-400">▼ 關閉</button>
             </div>
-            <div id="vkGrid" class="grid grid-cols-10 gap-1 md:gap-2"></div>
+            <!-- 使用 grid-cols-11 來排版注音鍵盤 -->
+            <div id="vkGrid" class="grid grid-cols-11 gap-1 md:gap-2"></div>
             <div class="grid grid-cols-4 gap-1 md:gap-2 mt-1 md:mt-2">
                 <button id="vkSpace" class="col-span-3 bg-white shadow rounded-lg p-2 md:p-3 text-lg font-bold active:bg-gray-200 touch-active">空白鍵 Space</button>
                 <button id="vkBksp" class="col-span-1 bg-[#9CA3AF] text-white shadow rounded-lg p-2 md:p-3 text-lg font-bold active:bg-gray-500 touch-active">⌫ 退格</button>
@@ -170,7 +184,7 @@
     <script>
         // ================= 狀態資料 =================
         let chatTitle = "春日部防衛隊";
-        let isLocked = false; // 是否已鎖定學生身分
+        let isLocked = false; 
         
         let speakers = [
             { id: 'me', name: '我(老師)', icon: '👦', isMe: true },
@@ -180,9 +194,10 @@
         
         let currentSpeakerId = 'me';
 
+        // 移除了英文，只保留中文對話
         let messages = [
-            { speakerId: 'masao', text: "小新，今天要出去玩嗎？<br>Shin, do you want to go out to play today?", time: "08:00" },
-            { speakerId: 'me', text: "好哇，我們公園見。OK, see you in the park.", time: "08:02" }
+            { speakerId: 'masao', text: "小新，今天要出去玩嗎？", time: "08:00" },
+            { speakerId: 'me', text: "好哇，我們公園見。", time: "08:02" }
         ];
 
         // ================= DOM 元素 =================
@@ -209,13 +224,11 @@
         // ================= 角色鎖定系統 =================
         function handleMemberBtnClick() {
             if (isLocked) {
-                // 如果已經鎖定，詢問是否解鎖 (防護機制)
                 if (confirm("目前設備已鎖定身分，是否要解除鎖定重新選擇？\n(老師端操作)")) {
                     isLocked = false;
                     updateLockedUI();
                 }
             } else {
-                // 如果未鎖定，開啟選單
                 openMemberModal();
             }
         }
@@ -224,7 +237,6 @@
             const list = document.getElementById('modalSpeakerList');
             list.innerHTML = '';
             
-            // 繪製既有發言人
             speakers.forEach(s => {
                 const isSelected = s.id === currentSpeakerId;
                 list.innerHTML += `
@@ -237,7 +249,6 @@
                 `;
             });
 
-            // 加入「新增角色」按鈕
             list.innerHTML += `
                 <div class="flex flex-col items-center cursor-pointer touch-active group" onclick="addNewSpeaker()">
                     <div class="w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center text-3xl md:text-4xl bg-gray-50 border-[3px] border-dashed border-gray-300 text-gray-400 group-active:scale-95">
@@ -277,10 +288,9 @@
                 name: name.substring(0, 4),
                 fullname: name,
                 icon: icon,
-                isMe: false // 預設新增的學生在畫面上會出現在左邊
+                isMe: false 
             });
             
-            // 重新渲染人數與 Modal
             memberCountEl.textContent = speakers.length;
             openMemberModal();
         }
@@ -290,27 +300,19 @@
             const memberBtn = document.getElementById('memberBtn');
             const indicator = document.getElementById('currentAvatarIndicator');
 
-            // 更新輸入框旁邊的提示頭像
             indicator.textContent = speaker.icon;
             memberCountEl.textContent = speakers.length;
 
             if (isLocked) {
-                // 鎖定狀態：右上角圖示變成目前的頭像，並加上綠色框
                 memberBtn.innerHTML = `<div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white flex items-center justify-center text-xl md:text-2xl shadow-sm border-[3px] border-[#06C755] bg-green-50 animate-pop-in">${speaker.icon}</div>`;
             } else {
-                // 未鎖定：恢復預設群組圖示
                 memberBtn.innerHTML = `<svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>`;
             }
         }
 
         // ================= 匯出與匯入系統 =================
-        // 下載 JSON
         document.getElementById('downloadBtn').addEventListener('click', function() {
-            const data = {
-                title: chatTitle,
-                speakers: speakers,
-                messages: messages
-            };
+            const data = { title: chatTitle, speakers: speakers, messages: messages };
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -322,7 +324,6 @@
             URL.revokeObjectURL(url);
         });
 
-        // 載入 JSON
         document.getElementById('uploadFile').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -338,7 +339,6 @@
                     titleEl.textContent = chatTitle;
                     memberCountEl.textContent = speakers.length;
                     
-                    // 載入新檔案後預設解除鎖定
                     isLocked = false; 
                     if(speakers.length > 0) currentSpeakerId = speakers[0].id;
                     
@@ -349,12 +349,10 @@
                 } catch(err) {
                     alert("讀取失敗：檔案格式不正確！");
                 }
-                // 清空 input file 的值，讓下次選同一個檔案也能觸發 change
                 e.target.value = '';
             };
             reader.readAsText(file);
         });
-
 
         // ================= 渲染聊天內容 =================
         function renderMessages() {
@@ -403,7 +401,6 @@
             const text = chatInput.value.trim();
             if (!text) return;
 
-            // 確保對話時間依照實際的中原標準時間 (台北時間)
             const now = new Date();
             const timeStr = now.toLocaleTimeString('zh-TW', { 
                 timeZone: 'Asia/Taipei',
@@ -450,10 +447,16 @@
         chatInput.addEventListener('input', toggleSendIcon);
         chatInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
         
-        // ================= 標記 1: 虛擬鍵盤邏輯 =================
+        // ================= 虛擬鍵盤邏輯 (中文注音版) =================
         const vk = document.getElementById('virtualKeyboard');
         const vkGrid = document.getElementById('vkGrid');
-        const keys = ['1','2','3','4','5','6','7','8','9','0','Q','W','E','R','T','Y','U','I','O','P','A','S','D','F','G','H','J','K','L','Z','X','C','V','B','N','M','?','!','@'];
+        // 標準注音鍵盤配置 (共 44 鍵，分為 4 排 11 欄)
+        const keys = [
+            'ㄅ','ㄉ','ˇ','ˋ','ㄓ','ˊ','˙','ㄚ','ㄞ','ㄢ','ㄦ',
+            'ㄆ','ㄊ','ㄍ','ㄐ','ㄔ','ㄗ','ㄧ','ㄛ','ㄟ','ㄣ','?',
+            'ㄇ','ㄋ','ㄎ','ㄑ','ㄕ','ㄘ','ㄨ','ㄜ','ㄠ','ㄤ','!',
+            'ㄈ','ㄌ','ㄏ','ㄒ','ㄖ','ㄙ','ㄩ','ㄝ','ㄡ','ㄥ','@'
+        ];
         
         // 產生按鍵
         keys.forEach(k => {
@@ -493,8 +496,36 @@
             scrollToBottom();
         });
 
-        // ================= 標記 2: 表情貼圖邏輯 =================
-        const emojis = ['😀','😂','🥰','😎','🥺','🤔','👍','🙏','❤️','✨','🎉','🔥','🍙','👦','👧','🐶','🐱','🎮'];
+        // ================= 擴充版表情貼圖邏輯 =================
+        const emojis = [
+            // 表情
+            '😀','😂','🥰','😎','🥺','🤔','👍','🙏','❤️','✨','🎉','🔥','💯','❓','❗️',
+            '😃','😄','😁','😆','😅','🤣','🥲','☺️','😊','😇','🙂','🙃','😉','😌','😍',
+            '😘','😗','😙','😚','😋','😛','😝','😜','🤪','🤨','🧐','🤓','🥸','🤩','🥳',
+            '😏','😒','😞','😔','😟','😕','🙁','☹️','😣','😖','😫','😩','😢','😭','😤',
+            '😠','😡','🤬','🤯','😳','🥵','🥶','😱','😨','😰','😥','😓','🤗','🫣','🤭',
+            '🫢','🫡','🤫','🫠','🤥','😶','🫥','😐','🫤','😑','😬','🙄','😯','😦','😧',
+            '😮','😲','🥱','😴','🤤','😪','😮‍💨','😵','😵‍💫','🤐','🥴','🤢','🤮','🤧','😷',
+            // 手勢
+            '👋','🤚','🖐','✋','🖖','👌','🤌','🤏','✌️','🤞','🫰','🤟','🤘','🤙','👈','👉',
+            '👆','🖕','👇','☝️','👍','👎','✊','👊','🤛','🤜','👏','🙌','🫶','👐','🤲','🤝',
+            // 人物角色
+            '👦','👧','👨','👩','👴','👵','👶','👱‍♂️','👱‍♀️','👨‍🦰','👩‍🦰','👮‍♂️','👮‍♀️','👷‍♂️','👷‍♀️',
+            '👩‍⚕️','👨‍⚕️','👩‍🏫','👨‍🏫','🧑‍🎓','👩‍🍳','👨‍🍳','🕵️‍♂️','🥷','🦸‍♂️','🦸‍♀️','🧙‍♂️','🧚‍♀️','🧛‍♂️','🧜‍♀️',
+            // 動物
+            '🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐻‍❄️','🐨','🐯','🦁','🐮','🐷','🐸','🐵',
+            '🐔','🐧','🐦','🐤','🦆','🦅','🦉','🦇','🐺','🐗','🐴','🦄','🐝','🐛','🦋',
+            // 食物
+            '🍏','🍎','🍊','🍋','🍌','🍉','🍇','🍓','🫐','🍈','🍒','🍑','🥭','🍍','🥥',
+            '🥝','🍅','🍆','🥑','🥦','🥬','🥒','🌽','🥕','🥔','🍠','🥐','🥯','🍞','🥖',
+            '🧀','🥚','🍳','🥞','🧇','🥓','🥩','🍗','🍖','🌭','🍔','🍟','🍕','🥪','🌮',
+            '🥗','🥘','🍝','🍜','🍲','🍛','🍣','🍱','🥟','🍤','🍙','🍚','🍘','🍢','🍡',
+            '🍧','🍨','🍦','🥧','🧁','🍰','🎂','🍮','🍭','🍬','🍫','🍿','🍩','🍪',
+            // 交通與天氣
+            '🚗','🚕','🚙','🚌','🚎','🏎','🚓','🚑','🚒','🚐','🚚','🚛','🚜',
+            '☀️','🌤','⛅️','🌥','☁️','🌦','🌧','⛈','🌩','🌨','❄️','☃️','⛄️','🌬','💨','☔️'
+        ];
+        
         const emojiGrid = document.getElementById('emojiGrid');
         const emojiPicker = document.getElementById('emojiPicker');
         
@@ -505,7 +536,6 @@
             span.onclick = () => {
                 chatInput.value += e;
                 toggleSendIcon();
-                emojiPicker.classList.add('hidden'); // 點擊後自動隱藏
             };
             emojiGrid.appendChild(span);
         });
@@ -522,14 +552,14 @@
             }
         });
 
-        // ================= 標記 3: 語音輸入邏輯 (Web Speech API) =================
+        // ================= 語音輸入邏輯 (Web Speech API) =================
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let recognition;
         
         if (SpeechRecognition) {
             recognition = new SpeechRecognition();
             recognition.lang = 'zh-TW';
-            recognition.interimResults = false; // 只取最終結果
+            recognition.interimResults = false; 
             
             recognition.onstart = () => {
                 micIcon.classList.add('text-red-500', 'animate-pulse');
@@ -557,12 +587,10 @@
             };
         }
 
-        // 修改原本的 SendBtn 事件，加入麥克風判斷
         document.getElementById('sendBtn').addEventListener('click', () => {
             if (chatInput.value.trim().length > 0) {
-                sendMessage(); // 如果有字，當作發送鍵
+                sendMessage(); 
             } else {
-                // 如果沒有字，當作麥克風鍵
                 if (recognition) {
                     recognition.start();
                 } else {
