@@ -2,24 +2,18 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <!-- 針對平板/手機的關鍵設定：確保寬度符合裝置，並禁止使用者雙擊縮放 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>會話練習系統</title>
+    <title>會話練習系統 - 鎖定版</title>
     <!-- 使用 Tailwind CSS 快速排版 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* 隱藏滾動條，保持畫面乾淨 */
-        ::-webkit-scrollbar {
-            display: none;
-        }
+        ::-webkit-scrollbar { display: none; }
         * {
             -ms-overflow-style: none;
             scrollbar-width: none;
-            user-select: none; /* 防止長按反白文字 */
+            user-select: none;
             -webkit-user-select: none;
         }
-        
-        /* 允許輸入框可以選取與操作文字 */
         input {
             user-select: auto;
             -webkit-user-select: auto;
@@ -63,119 +57,128 @@
 </head>
 <body class="bg-gray-800 h-screen w-screen flex justify-center items-center font-sans overflow-hidden">
 
-    <!-- 模擬手機/平板外框 (在大螢幕上置中顯示，在小螢幕上全螢幕) -->
+    <!-- 主容器 -->
     <div class="w-full h-full max-w-3xl sm:h-[95vh] sm:rounded-[3rem] sm:border-[12px] border-gray-900 bg-[#7BA3B8] flex flex-col relative overflow-hidden shadow-2xl">
         
         <!-- ================= 頂部標題列 ================= -->
-        <header class="flex items-center justify-between px-4 py-4 md:py-5 text-white z-10">
+        <header class="flex items-center justify-between px-4 py-4 md:py-5 text-white z-10 border-b border-white/10">
             <div class="flex items-center gap-3 md:gap-4 overflow-hidden">
                 <!-- 返回按鈕 -->
                 <svg class="w-6 h-6 md:w-8 md:h-8 touch-active cursor-pointer flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
                 
-                <!-- 群組名稱 (點擊可改名) -->
+                <!-- 群組名稱 -->
                 <div class="flex items-center gap-2 cursor-pointer touch-active truncate" onclick="renameChat()" title="點擊改名">
                     <h1 id="chatTitle" class="text-xl md:text-3xl font-bold truncate">春日部防衛隊</h1>
-                    <span class="bg-white/20 text-white text-xs md:text-sm px-2 py-0.5 rounded-full">3</span>
+                    <span class="bg-white/20 text-white text-xs md:text-sm px-2 py-0.5 rounded-full" id="memberCount">3</span>
                 </div>
             </div>
             
             <div class="flex items-center gap-4 md:gap-6 flex-shrink-0">
-                <!-- 筆記 Icon -->
-                <svg class="w-6 h-6 md:w-8 md:h-8 touch-active cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                <!-- 下載 Icon -->
-                <svg class="w-6 h-6 md:w-8 md:h-8 touch-active cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                <!-- 成員 Icon -->
-                <svg class="w-6 h-6 md:w-8 md:h-8 touch-active cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                <!-- 漢堡選單 Icon (標記 5) -->
+                <!-- 載入 Icon (取代原本的筆記) -->
+                <label class="cursor-pointer touch-active" title="載入對話紀錄">
+                    <input type="file" id="uploadFile" class="hidden" accept=".json">
+                    <svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                </label>
+                <!-- 下載/儲存 Icon -->
+                <svg id="downloadBtn" class="w-6 h-6 md:w-8 md:h-8 touch-active cursor-pointer" title="下載對話紀錄" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                
+                <!-- 群組人員 / 鎖定狀態 Icon -->
+                <div id="memberBtn" class="touch-active cursor-pointer relative" onclick="handleMemberBtnClick()" title="選擇發言人">
+                    <!-- 預設顯示群組 Icon，鎖定時會替換成頭像 -->
+                    <svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                </div>
+                
+                <!-- 漢堡選單 -->
                 <svg class="w-7 h-7 md:w-9 md:h-9 touch-active cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </div>
         </header>
 
         <!-- ================= 聊天內容區 ================= -->
         <main id="chatBox" class="flex-1 overflow-y-auto px-4 py-2 flex flex-col gap-5 pb-4 scroll-smooth">
-            <!-- 預設訊息內容會由 JavaScript 寫入 -->
+            <!-- 動態插入 -->
         </main>
 
-        <!-- ================= 發言人選擇區 ================= -->
-        <div class="bg-[#F3F4F6] border-b border-gray-300 px-4 py-3 md:py-4 flex items-center gap-3 overflow-x-auto">
-            <span class="text-sm md:text-base text-gray-500 font-medium whitespace-nowrap">目前發言人：</span>
-            
-            <div id="speakerList" class="flex gap-4 items-center">
-                <!-- 發言人列表會由 JavaScript 動態生成 -->
-            </div>
-        </div>
-
         <!-- ================= 底部輸入區 ================= -->
-        <div class="bg-[#F3F4F6] px-3 py-3 md:px-5 md:py-4 flex items-center gap-3 pb-6 sm:pb-4">
-            <!-- 標記 4: 圓圈加號 -->
-            <svg class="w-7 h-7 md:w-9 md:h-9 text-gray-500 touch-active cursor-pointer flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <div class="bg-[#F3F4F6] px-3 py-3 md:px-5 md:py-4 flex items-center gap-2 md:gap-3 pb-6 sm:pb-4 border-t border-gray-300">
+            <!-- 圓圈加號 -->
+            <svg class="w-7 h-7 md:w-9 md:h-9 text-gray-500 touch-active cursor-pointer flex-shrink-0 hidden md:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             <!-- 相機 -->
             <svg class="w-7 h-7 md:w-9 md:h-9 text-gray-500 touch-active cursor-pointer flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-            <!-- 標記 2: 圖片庫 -->
+            <!-- 圖片庫 -->
             <svg class="w-7 h-7 md:w-9 md:h-9 text-gray-500 touch-active cursor-pointer flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
             
-            <!-- 文字輸入框 -->
-            <div class="flex-1 bg-white rounded-full flex items-center px-4 py-2 md:py-3 border border-gray-300 shadow-sm">
+            <!-- 文字輸入框 (內含鎖定頭像提示) -->
+            <div class="flex-1 bg-white rounded-full flex items-center px-2 py-1.5 md:px-3 md:py-2 border border-gray-300 shadow-sm transition-all focus-within:border-[#06C755] focus-within:ring-2 focus-within:ring-[#06C755]/20">
+                
+                <!-- 顯示目前是誰在打字的小頭像 -->
+                <div id="currentAvatarIndicator" class="w-7 h-7 md:w-9 md:h-9 rounded-full bg-gray-100 flex items-center justify-center text-sm md:text-lg flex-shrink-0 border border-gray-200 mr-2" title="目前發言身分">
+                    👦
+                </div>
+
                 <input type="text" id="chatInput" class="w-full bg-transparent outline-none text-base md:text-xl" placeholder="輸入訊息...">
-                <!-- 標記 3: 表情符號 -->
-                <svg class="w-6 h-6 md:w-8 md:h-8 text-gray-400 cursor-pointer ml-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                
+                <svg class="w-6 h-6 md:w-8 md:h-8 text-gray-400 cursor-pointer ml-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             </div>
             
-            <!-- 發送 / 麥克風切換按鈕 -->
-            <button id="sendBtn" class="text-gray-500 hover:text-green-500 touch-active flex-shrink-0 p-1">
-                <!-- 預設麥克風 Icon -->
+            <!-- 發送按鈕 -->
+            <button id="sendBtn" class="text-gray-500 hover:text-[#06C755] touch-active flex-shrink-0 p-1 transition-colors">
                 <svg id="micIcon" class="w-7 h-7 md:w-9 md:h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
-                <!-- 打字時切換為發送 Icon (預設隱藏) -->
                 <svg id="planeIcon" class="w-7 h-7 md:w-9 md:h-9 hidden text-[#06C755]" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path></svg>
             </button>
         </div>
+
+        <!-- ================= 角色選擇與鎖定 Modal ================= -->
+        <div id="memberModal" class="hidden absolute inset-0 bg-black/60 z-50 flex justify-center items-end sm:items-center backdrop-blur-sm transition-opacity">
+            <div class="bg-white rounded-t-3xl sm:rounded-3xl p-6 w-full sm:w-[85%] max-w-md shadow-2xl animate-pop-in">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">選擇發言角色</h2>
+                    <button onclick="closeMemberModal()" class="text-gray-500 hover:text-gray-800">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                
+                <p class="text-sm text-gray-500 mb-4">點選頭像後將鎖定您的身分，其他人無法更改。</p>
+
+                <!-- 名單列表 -->
+                <div id="modalSpeakerList" class="grid grid-cols-4 gap-y-6 gap-x-2 max-h-[50vh] overflow-y-auto p-2">
+                    <!-- Javascript 動態產生 -->
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
         // ================= 狀態資料 =================
         let chatTitle = "春日部防衛隊";
+        let isLocked = false; // 是否已鎖定學生身分
         
-        // 發言人清單設定 (isMe: true 代表訊息會出現在右邊)
         let speakers = [
-            { id: 'me', name: '我', icon: '👦', isMe: true },
+            { id: 'me', name: '我(老師)', icon: '👦', isMe: true },
             { id: 'masao', name: '正男', icon: '🍙', isMe: false, fullname: '正男 (Masao)' },
             { id: 'kazama', name: '風間', icon: '👦🏻', isMe: false, fullname: '風間 (Kazama)' }
         ];
         
-        // 預設選中「我」
         let currentSpeakerId = 'me';
 
-        // 預設聊天紀錄 (仿造圖片內容)
         let messages = [
-            {
-                speakerId: 'masao',
-                text: "小新，今天要出去玩嗎？<br>Shin, do you want to go out to play today?",
-                time: "08:00"
-            },
-            {
-                speakerId: 'me',
-                text: "好哇，我們公園見。OK, see you in the park.",
-                time: "08:02"
-            }
+            { speakerId: 'masao', text: "小新，今天要出去玩嗎？<br>Shin, do you want to go out to play today?", time: "08:00" },
+            { speakerId: 'me', text: "好哇，我們公園見。OK, see you in the park.", time: "08:02" }
         ];
 
         // ================= DOM 元素 =================
         const chatBox = document.getElementById('chatBox');
-        const speakerList = document.getElementById('speakerList');
         const chatInput = document.getElementById('chatInput');
-        const sendBtn = document.getElementById('sendBtn');
-        const micIcon = document.getElementById('micIcon');
-        const planeIcon = document.getElementById('planeIcon');
         const titleEl = document.getElementById('chatTitle');
+        const memberCountEl = document.getElementById('memberCount');
 
         // ================= 初始化 =================
         function init() {
-            renderSpeakers();
+            updateLockedUI();
             renderMessages();
             scrollToBottom();
         }
 
-        // ================= 改名功能 =================
         function renameChat() {
             const newName = prompt("請輸入新的群組名稱：", chatTitle);
             if (newName && newName.trim() !== "") {
@@ -184,46 +187,65 @@
             }
         }
 
-        // ================= 渲染發言人選單 =================
-        function renderSpeakers() {
-            speakerList.innerHTML = '';
+        // ================= 角色鎖定系統 =================
+        function handleMemberBtnClick() {
+            if (isLocked) {
+                // 如果已經鎖定，詢問是否解鎖 (防護機制)
+                if (confirm("目前設備已鎖定身分，是否要解除鎖定重新選擇？\n(老師端操作)")) {
+                    isLocked = false;
+                    updateLockedUI();
+                }
+            } else {
+                // 如果未鎖定，開啟選單
+                openMemberModal();
+            }
+        }
+
+        function openMemberModal() {
+            const list = document.getElementById('modalSpeakerList');
+            list.innerHTML = '';
             
             // 繪製既有發言人
-            speakers.forEach(speaker => {
-                const isSelected = speaker.id === currentSpeakerId;
-                
-                // 動態產生 HTML
-                const html = `
-                    <div class="flex flex-col items-center cursor-pointer touch-active" onclick="selectSpeaker('${speaker.id}')">
-                        <div class="w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center text-2xl md:text-3xl bg-white shadow-sm border-[3px] transition-colors ${isSelected ? 'border-[#06C755]' : 'border-transparent opacity-60'}">
-                            ${speaker.icon}
+            speakers.forEach(s => {
+                const isSelected = s.id === currentSpeakerId;
+                list.innerHTML += `
+                    <div class="flex flex-col items-center cursor-pointer touch-active group" onclick="lockSpeaker('${s.id}')">
+                        <div class="w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center text-3xl md:text-4xl bg-white shadow-sm border-[3px] transition-all group-active:scale-95 ${isSelected ? 'border-[#06C755] bg-green-50' : 'border-gray-200'}">
+                            ${s.icon}
                         </div>
-                        <span class="text-xs md:text-sm mt-1 ${isSelected ? 'text-gray-800 font-bold' : 'text-gray-500'}">${speaker.name}</span>
+                        <span class="mt-2 text-xs md:text-sm font-medium ${isSelected ? 'text-[#06C755]' : 'text-gray-600'} truncate w-full text-center">${s.name}</span>
                     </div>
                 `;
-                speakerList.insertAdjacentHTML('beforeend', html);
             });
 
-            // 加入「新增發言人」按鈕
-            const addBtnHtml = `
-                <div class="flex flex-col items-center cursor-pointer touch-active" onclick="addNewSpeaker()">
-                    <div class="w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center text-2xl md:text-3xl bg-white shadow-sm border-[3px] border-dashed border-gray-300 text-gray-400 opacity-80">
+            // 加入「新增角色」按鈕
+            list.innerHTML += `
+                <div class="flex flex-col items-center cursor-pointer touch-active group" onclick="addNewSpeaker()">
+                    <div class="w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center text-3xl md:text-4xl bg-gray-50 border-[3px] border-dashed border-gray-300 text-gray-400 group-active:scale-95">
                         +
                     </div>
-                    <span class="text-xs md:text-sm mt-1 text-gray-400">新增</span>
+                    <span class="mt-2 text-xs md:text-sm font-medium text-gray-500">新增</span>
                 </div>
             `;
-            speakerList.insertAdjacentHTML('beforeend', addBtnHtml);
+
+            document.getElementById('memberModal').classList.remove('hidden');
         }
 
-        // 選擇發言人
-        function selectSpeaker(id) {
-            currentSpeakerId = id;
-            renderSpeakers(); // 重新渲染更新綠色框框
-            chatInput.focus(); // 保持輸入焦點
+        function closeMemberModal() {
+            document.getElementById('memberModal').classList.add('hidden');
         }
 
-        // 新增發言人功能
+        function lockSpeaker(id) {
+            const speaker = speakers.find(s => s.id === id);
+            if (confirm(`確定要以「${speaker.fullname || speaker.name}」的身份發言並鎖定嗎？`)) {
+                currentSpeakerId = id;
+                isLocked = true;
+                closeMemberModal();
+                updateLockedUI();
+                chatInput.focus();
+            }
+        }
+
         function addNewSpeaker() {
             const name = prompt("請輸入新角色的名稱：\n(例如：妮妮)");
             if (!name) return;
@@ -233,14 +255,87 @@
             const newId = 'user_' + Date.now();
             speakers.push({
                 id: newId,
-                name: name.substring(0, 4), // 簡稱
+                name: name.substring(0, 4),
                 fullname: name,
                 icon: icon,
-                isMe: false // 預設新增的都是別人(顯示在左邊)
+                isMe: false // 預設新增的學生在畫面上會出現在左邊
             });
             
-            selectSpeaker(newId);
+            // 重新渲染人數與 Modal
+            memberCountEl.textContent = speakers.length;
+            openMemberModal();
         }
+
+        function updateLockedUI() {
+            const speaker = speakers.find(s => s.id === currentSpeakerId) || speakers[0];
+            const memberBtn = document.getElementById('memberBtn');
+            const indicator = document.getElementById('currentAvatarIndicator');
+
+            // 更新輸入框旁邊的提示頭像
+            indicator.textContent = speaker.icon;
+            memberCountEl.textContent = speakers.length;
+
+            if (isLocked) {
+                // 鎖定狀態：右上角圖示變成目前的頭像，並加上綠色框
+                memberBtn.innerHTML = `<div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white flex items-center justify-center text-xl md:text-2xl shadow-sm border-[3px] border-[#06C755] bg-green-50 animate-pop-in">${speaker.icon}</div>`;
+            } else {
+                // 未鎖定：恢復預設群組圖示
+                memberBtn.innerHTML = `<svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>`;
+            }
+        }
+
+        // ================= 匯出與匯入系統 =================
+        // 下載 JSON
+        document.getElementById('downloadBtn').addEventListener('click', function() {
+            const data = {
+                title: chatTitle,
+                speakers: speakers,
+                messages: messages
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${chatTitle}_對話紀錄.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+        // 載入 JSON
+        document.getElementById('uploadFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                try {
+                    const data = JSON.parse(evt.target.result);
+                    if (data.title) chatTitle = data.title;
+                    if (data.speakers) speakers = data.speakers;
+                    if (data.messages) messages = data.messages;
+                    
+                    titleEl.textContent = chatTitle;
+                    memberCountEl.textContent = speakers.length;
+                    
+                    // 載入新檔案後預設解除鎖定
+                    isLocked = false; 
+                    if(speakers.length > 0) currentSpeakerId = speakers[0].id;
+                    
+                    updateLockedUI();
+                    renderMessages();
+                    scrollToBottom();
+                    alert("載入成功！學生名單與紀錄已更新。");
+                } catch(err) {
+                    alert("讀取失敗：檔案格式不正確！");
+                }
+                // 清空 input file 的值，讓下次選同一個檔案也能觸發 change
+                e.target.value = '';
+            };
+            reader.readAsText(file);
+        });
+
 
         // ================= 渲染聊天內容 =================
         function renderMessages() {
@@ -252,7 +347,6 @@
                 msgEl.className = 'w-full flex animate-pop-in';
 
                 if (speaker.isMe) {
-                    // 我方訊息 (靠右)
                     msgEl.classList.add('justify-end');
                     msgEl.innerHTML = `
                         <div class="flex items-end gap-2 max-w-[85%]">
@@ -263,15 +357,12 @@
                         </div>
                     `;
                 } else {
-                    // 對方訊息 (靠左)
                     msgEl.classList.add('justify-start');
                     msgEl.innerHTML = `
                         <div class="flex items-start gap-3 max-w-[85%]">
-                            <!-- 頭像 -->
-                            <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white flex items-center justify-center text-2xl flex-shrink-0 shadow-sm mt-1">
+                            <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white flex items-center justify-center text-2xl flex-shrink-0 shadow-sm mt-1 border border-gray-100">
                                 ${speaker.icon}
                             </div>
-                            <!-- 名字與氣泡 -->
                             <div class="flex flex-col gap-1">
                                 <span class="text-xs md:text-sm text-white ml-1 drop-shadow-md">${speaker.fullname || speaker.name}</span>
                                 <div class="flex items-end gap-2">
@@ -293,11 +384,8 @@
             const text = chatInput.value.trim();
             if (!text) return;
 
-            // 取得現在時間 HH:MM
             const now = new Date();
             const timeStr = now.toLocaleTimeString('zh-TW', { hour12: false, hour: '2-digit', minute: '2-digit' });
-
-            // 轉換換行符號
             const formattedText = text.replace(/\n/g, '<br>');
 
             messages.push({
@@ -307,7 +395,7 @@
             });
 
             chatInput.value = '';
-            toggleSendIcon(); // 重置 Icon
+            toggleSendIcon();
             
             renderMessages();
             scrollToBottom();
@@ -320,7 +408,10 @@
             }, 50);
         }
 
-        // 監聽輸入框變化，切換麥克風/發送圖示
+        // 監聽輸入框變化
+        const micIcon = document.getElementById('micIcon');
+        const planeIcon = document.getElementById('planeIcon');
+        
         function toggleSendIcon() {
             if (chatInput.value.trim().length > 0) {
                 micIcon.classList.add('hidden');
@@ -331,27 +422,13 @@
             }
         }
 
-        // 綁定事件
         chatInput.addEventListener('input', toggleSendIcon);
-        
-        chatInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
+        chatInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
+        document.getElementById('sendBtn').addEventListener('click', () => {
+            if (chatInput.value.trim().length > 0) sendMessage();
         });
 
-        sendBtn.addEventListener('click', function() {
-            if (chatInput.value.trim().length > 0) {
-                sendMessage();
-            } else {
-                // 如果是麥克風狀態點擊，可以設定為語音輸入的提示
-                alert("語音輸入功能可在此擴充！");
-            }
-        });
-
-        // 啟動應用
         init();
-
     </script>
 </body>
 </html>
