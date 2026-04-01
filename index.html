@@ -79,8 +79,8 @@
 </head>
 <body class="bg-gray-800 h-screen w-screen flex justify-center items-center font-sans overflow-hidden relative">
 
-    <!-- App 總容器：使用 Flex 排版讓聊天室與側邊欄能並排 -->
-    <div class="flex flex-row h-full w-full max-w-[80rem] sm:h-[95vh] justify-center transition-all duration-300 px-0 sm:px-4">
+    <!-- App 總容器：加入 sm:items-center 確保內部視窗完美垂直置中對齊 -->
+    <div class="flex flex-row h-full w-full max-w-[80rem] sm:h-[95vh] justify-center sm:items-center transition-all duration-300 px-0 sm:px-4">
         
         <!-- ================= 主聊天視窗 ================= -->
         <div class="w-full h-full max-w-3xl sm:rounded-[3rem] sm:border-[12px] border-gray-900 bg-[#7BA3B8] flex flex-col relative overflow-hidden shadow-2xl shrink sm:shrink-0 z-20 transition-all duration-300">
@@ -153,11 +153,34 @@
             </div>
 
             <!-- 虛擬鍵盤容器 -->
-            <div id="virtualKeyboard" class="hidden bg-[#D1D5DB] p-2 md:p-4 flex-col gap-1 md:gap-2 shadow-[inset_0_4px_6px_-1px_rgba(0,0,0,0.1)] z-20">
-                <div class="flex justify-between items-center mb-1 px-1">
-                    <span class="text-xs text-gray-600 font-bold">注音虛擬鍵盤</span>
-                    <button id="vkClose" class="text-gray-700 bg-gray-200 px-3 py-1 rounded-lg shadow border border-gray-300 text-sm active:bg-gray-400">▼ 關閉</button>
-                </div>
+        <div id="virtualKeyboard" class="hidden bg-[#D1D5DB] p-2 md:p-4 flex-col gap-1 md:gap-2 shadow-[inset_0_4px_6px_-1px_rgba(0,0,0,0.1)] z-20">
+            <div class="flex justify-between items-center mb-1 px-1">
+                <span class="text-xs text-gray-600 font-bold">注音虛擬鍵盤</span>
+                <button id="vkClose" class="text-gray-700 bg-gray-200 px-3 py-1 rounded-lg shadow border border-gray-300 text-sm active:bg-gray-400">▼ 關閉</button>
+            </div>
+            <div id="vkGrid" class="grid grid-cols-11 gap-1 md:gap-2"></div>
+            <div class="grid grid-cols-4 gap-1 md:gap-2 mt-1 md:mt-2">
+                <button id="vkSpace" class="col-span-3 bg-white shadow rounded-lg p-2 md:p-3 text-lg font-bold active:bg-gray-200 touch-active">空白鍵 Space</button>
+                <button id="vkBksp" class="col-span-1 bg-[#9CA3AF] text-white shadow rounded-lg p-2 md:p-3 text-lg font-bold active:bg-gray-500 touch-active">⌫ 退格</button>
+            </div>
+        </div>
+    </div>
+    <!-- 主聊天視窗結束 -->
+
+    <!-- ================= 並排式角色名單側邊欄 (Side-by-side Panel) ================= -->
+    <!-- 精確計算高度 h-[calc(100%-24px)] 與導角 rounded-[2.25rem] 來完美貼合主視窗的內緣 -->
+    <div id="memberSidebar" class="fixed inset-y-0 right-0 z-50 w-full sm:relative sm:inset-auto sm:z-10 h-full sm:h-[calc(100%-24px)] sm:w-0 overflow-hidden bg-white sm:rounded-[2.25rem] flex flex-col shadow-2xl transition-all duration-300 opacity-0 translate-x-full sm:translate-x-0 sm:ml-0">
+        <!-- 內層定寬容器，防止動畫期間內容被擠壓變形 -->
+        <div class="w-full sm:w-80 h-full flex flex-col min-w-full sm:min-w-[20rem]">
+            <div class="p-4 md:p-5 border-b flex justify-between items-center bg-gray-50">
+                <h2 class="text-xl font-bold text-gray-800">名單管理</h2>
+                <button onclick="closeMemberSidebar()" class="text-gray-500 hover:text-gray-800 p-1 bg-white rounded-full shadow-sm border border-gray-200 active:scale-95">
+                    <svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+            </div>
+            <div class="px-4 pt-3 pb-1 text-xs text-gray-500">
+                點擊<span class="font-bold text-gray-700">頭像</span>可上傳圖片；點擊<span class="font-bold text-gray-700">名稱</span>可直接修改。鎖定後即無法變更身分。
+            </div>
                 <div id="vkGrid" class="grid grid-cols-11 gap-1 md:gap-2"></div>
                 <div class="grid grid-cols-4 gap-1 md:gap-2 mt-1 md:mt-2">
                     <button id="vkSpace" class="col-span-3 bg-white shadow rounded-lg p-2 md:p-3 text-lg font-bold active:bg-gray-200 touch-active">空白鍵 Space</button>
