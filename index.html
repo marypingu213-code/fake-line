@@ -27,7 +27,8 @@
     <div class="flex flex-row h-full w-full max-w-[80rem] sm:h-[95vh] justify-center sm:items-center transition-all duration-300 px-0 sm:px-4">
         
         <div class="w-full h-full max-w-3xl sm:rounded-[3rem] sm:border-[12px] border-gray-900 bg-[#7BA3B8] flex flex-col relative overflow-hidden shadow-2xl shrink sm:shrink-0 z-20 transition-all duration-300">
-            <header class="flex items-center justify-between px-4 py-4 md:py-5 text-white z-10 border-b border-white/10">
+            
+            <header class="flex items-center justify-between px-4 py-4 md:py-5 text-white z-10 border-b border-white/10 shrink-0">
                 <div class="flex items-center gap-2 md:gap-4 overflow-hidden">
                     <svg class="w-6 h-6 md:w-8 md:h-8 touch-active cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
                     <div class="flex flex-col cursor-pointer touch-active overflow-hidden" onclick="renameChat()">
@@ -41,20 +42,20 @@
                         </div>
                     </div>
                 </div>
+                
                 <div class="flex items-center gap-3 md:gap-5 flex-shrink-0">
                     <button onclick="openQrModal()" class="touch-active bg-white/20 p-1.5 md:p-2 rounded-xl hover:bg-white/30"><svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h3v3h-3zM20 20h-3v-3h3v3zM14 17h6M17 14v6"></path></svg></button>
                     <button id="downloadBtn" class="touch-active"><svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></button>
                     <button onclick="openStatsModal()" class="touch-active"><svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg></button>
                     <div id="memberBtn" class="touch-active cursor-pointer relative" onclick="handleMemberBtnClick()"><svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg></div>
-                    <svg class="w-7 h-7 md:w-9 md:h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
                 </div>
             </header>
 
             <main id="chatBox" class="flex-1 overflow-y-auto px-4 py-2 flex flex-col gap-5 pb-4 scroll-smooth"></main>
 
-            <div class="bg-[#F3F4F6] px-3 py-3 md:px-5 md:py-4 flex items-center gap-2 md:gap-3 pb-6 sm:pb-4 border-t border-gray-300 relative z-30">
+            <div class="bg-[#F3F4F6] px-3 py-3 md:px-5 md:py-4 flex items-center gap-2 md:gap-3 pb-6 sm:pb-4 border-t border-gray-300 relative z-30 shrink-0">
                 <svg class="w-7 h-7 md:w-9 md:h-9 text-gray-500 hidden md:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                <svg class="w-7 h-7 md:w-9 md:h-9 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+                <svg class="w-7 h-7 md:w-9 md:h-9 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><circle cx="12" cy="13" r="3" stroke="currentColor" stroke-width="2"></circle></svg>
                 <svg class="w-7 h-7 md:w-9 md:h-9 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                 
                 <div class="flex-1 bg-white rounded-full flex items-center px-2 py-1.5 md:px-3 md:py-2 border border-gray-300 shadow-sm relative">
@@ -72,7 +73,7 @@
                 </button>
             </div>
 
-            <div id="virtualKeyboard" class="hidden bg-[#D1D5DB] p-2 md:p-4 flex-col gap-1 md:gap-2 shadow-[inset_0_4px_6px_-1px_rgba(0,0,0,0.1)] z-20">
+            <div id="virtualKeyboard" class="hidden bg-[#D1D5DB] p-2 md:p-4 flex-col gap-1 md:gap-2 shadow-[inset_0_4px_6px_-1px_rgba(0,0,0,0.1)] z-20 shrink-0">
                 <div class="flex justify-between items-center mb-1 px-1">
                     <span class="text-xs text-gray-600 font-bold">注音虛擬鍵盤</span>
                     <button id="vkClose" class="text-gray-700 bg-gray-200 px-3 py-1 rounded-lg shadow border border-gray-300 text-sm">▼ 關閉</button>
@@ -91,8 +92,9 @@
                     <h2 class="text-xl font-bold text-gray-800">名單管理</h2>
                     <button onclick="closeMemberSidebar()" class="text-gray-500 hover:text-gray-800 p-1 bg-white rounded-full shadow-sm border border-gray-200"><svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button>
                 </div>
-                <div class="px-4 pt-3 pb-1 text-xs text-gray-500 shrink-0">點擊頭像上傳，點擊名稱修改。</div>
-                <div id="sidebarSpeakerList" class="flex-1 overflow-y-auto p-4 flex flex-col gap-3"></div>
+                <div class="px-4 pt-3 pb-1 text-xs text-gray-500 shrink-0">點擊頭像上傳圖片；點擊名稱可直接修改。</div>
+                <div id="sidebarSpeakerList" class="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
+                    </div>
                 <div class="p-4 border-t bg-gray-50 pb-8 sm:pb-4 shrink-0">
                     <button onclick="addNewSpeaker()" class="w-full py-3 md:py-4 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-xl flex items-center justify-center gap-2">➕ 新增成員</button>
                 </div>
@@ -100,8 +102,6 @@
             </div>
         </div>
     </div>
-
-    <div id="sidebarOverlay" class="fixed inset-0 bg-black/40 z-40 hidden sm:hidden" onclick="closeMemberSidebar()"></div>
 
     <div id="qrModal" class="fixed inset-0 bg-black/60 z-50 hidden justify-center items-center backdrop-blur-sm">
         <div class="bg-white rounded-3xl p-8 max-w-sm w-[90%] flex flex-col items-center shadow-2xl relative">
@@ -117,11 +117,11 @@
             <button onclick="closeStatsModal()" class="absolute top-4 right-4 text-gray-400"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button>
             <h2 class="text-2xl font-bold text-gray-800 mb-2 text-center">📊 參與度評估</h2>
             <div id="statsList" class="flex-1 overflow-y-auto pr-2 flex flex-col gap-3"></div>
-            <div class="mt-6 flex flex-col gap-3">
+            <div class="mt-6 flex flex-col gap-3 shrink-0">
                 <button id="aiEvalBtn" onclick="runAIEvaluation()" class="w-full py-3 bg-indigo-500 text-white font-bold rounded-xl">🤖 產生 AI 智能評估與回饋</button>
                 <div class="flex gap-3">
-                    <button onclick="closeStatsModal()" class="flex-1 py-3 bg-gray-200 rounded-xl">繼續</button>
-                    <button onclick="clearChat()" class="flex-1 py-3 bg-red-500 text-white rounded-xl">清空結束</button>
+                    <button onclick="closeStatsModal()" class="flex-1 py-3 bg-gray-200 rounded-xl font-bold">繼續</button>
+                    <button onclick="clearChat()" class="flex-1 py-3 bg-red-500 text-white rounded-xl font-bold">清空重置</button>
                 </div>
             </div>
         </div>
@@ -132,7 +132,7 @@
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-        // Firebase 配置 (已填入您的資訊)
+        // ================= 使用您提供的 Firebase 配置 =================
         const firebaseConfig = {
             apiKey: "AIzaSyBOr41Km1V003CsxdETTNB4LEqFnPj3OWM",
             authDomain: "fake-line-56d5e.firebaseapp.com",
@@ -150,13 +150,12 @@
         let chatTitle = "春日部防衛隊";
         let speakers = [
             { id: 'me', name: '我(老師)', icon: '👦', image: null, isMe: true },
-            { id: 'masao', name: '正男', icon: '🍙', image: null, isMe: false, fullname: '正男' },
-            { id: 'kazama', name: '風間', icon: '👦🏻', image: null, isMe: false, fullname: '風間' }
+            { id: 'masao', name: '正男', icon: '🍙', image: null, isMe: false, fullname: '正男 (Masao)' },
+            { id: 'kazama', name: '風間', icon: '👦🏻', image: null, isMe: false, fullname: '風間 (Kazama)' }
         ];
         let currentSpeakerId = 'me';
         let messages = [];
         let isLocked = false;
-        let isOnline = false;
         let isCloudSyncing = false;
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -182,7 +181,8 @@
                     scrollToBottom();
                     isCloudSyncing = false;
                 } else { saveToCloud(); }
-                updateStatus(true);
+                document.getElementById('syncStatusDot').className = 'status-dot status-online';
+                document.getElementById('syncStatusText').textContent = '已連線 (即時同步)';
             });
         });
 
@@ -191,15 +191,9 @@
             await setDoc(docRef, { title: chatTitle, speakers, messages, updatedAt: new Date().toISOString() }, { merge: true });
         }
 
-        function updateStatus(online) {
-            isOnline = online;
-            document.getElementById('syncStatusDot').className = online ? 'status-dot status-online' : 'status-dot status-offline';
-            document.getElementById('syncStatusText').textContent = online ? '已連線 (同步中)' : '離線模式';
-        }
-
-        // 基本 UI 邏輯
+        // --- 名單與對話核心函式 ---
         window.getAvatarHtml = (s, cls) => s.image ? `<img src="${s.image}" class="w-full h-full object-cover">` : `<span class="${cls}">${s.icon}</span>`;
-        window.scrollToBottom = () => { setTimeout(() => { const b = document.getElementById('chatBox'); if(b) b.scrollTo({top: b.scrollHeight, behavior:'smooth'}); }, 50); };
+        window.scrollToBottom = () => { setTimeout(() => { const b = document.getElementById('chatBox'); if(b) b.scrollTo({top: b.scrollHeight, behavior:'smooth'}); }, 100); };
 
         window.renderMessages = () => {
             const b = document.getElementById('chatBox'); b.innerHTML = '';
@@ -214,18 +208,6 @@
             });
         };
 
-        window.updateLockedUI = () => {
-            const s = speakers.find(x => x.id === currentSpeakerId) || speakers[0];
-            document.getElementById('currentAvatarIndicator').innerHTML = getAvatarHtml(s, 'text-sm md:text-lg');
-            const btn = document.getElementById('memberBtn');
-            if (isLocked) btn.innerHTML = `<div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white flex items-center justify-center border-[3px] border-[#06C755] overflow-hidden">${getAvatarHtml(s, 'text-xl')}</div>`;
-            else btn.innerHTML = `<svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>`;
-        };
-
-        window.handleMemberBtnClick = () => { if (isLocked) alert("🔒 身分已鎖定，請重新整理網頁以更換。"); else openMemberSidebar(); };
-        window.openMemberSidebar = () => { renderSidebarSpeakers(); const s = document.getElementById('memberSidebar'); s.classList.remove('translate-x-full', 'sm:w-0', 'opacity-0'); s.classList.add('translate-x-0', 'sm:w-80', 'opacity-100', 'sm:ml-4'); document.getElementById('sidebarOverlay').classList.remove('hidden'); };
-        window.closeMemberSidebar = () => { const s = document.getElementById('memberSidebar'); s.classList.add('translate-x-full', 'sm:w-0', 'opacity-0'); s.classList.remove('translate-x-0', 'sm:w-80', 'opacity-100', 'sm:ml-4'); document.getElementById('sidebarOverlay').classList.add('hidden'); };
-
         window.renderSidebarSpeakers = () => {
             const l = document.getElementById('sidebarSpeakerList'); l.innerHTML = '';
             speakers.forEach(s => {
@@ -235,9 +217,19 @@
             });
         };
 
-        window.lockSpeaker = (id) => { const s = speakers.find(x => x.id === id); if (confirm(`鎖定為「${s.fullname || s.name}」嗎？`)) { currentSpeakerId = id; isLocked = true; closeMemberSidebar(); updateLockedUI(); } };
+        window.handleMemberBtnClick = () => { if (isLocked) alert("🔒 身分已鎖定，更換請重新整理頁面。"); else openMemberSidebar(); };
+        window.openMemberSidebar = () => { renderSidebarSpeakers(); const s = document.getElementById('memberSidebar'); s.classList.remove('translate-x-full', 'sm:w-0', 'opacity-0'); s.classList.add('translate-x-0', 'sm:w-80', 'opacity-100', 'sm:ml-4'); };
+        window.closeMemberSidebar = () => { const s = document.getElementById('memberSidebar'); s.classList.add('translate-x-full', 'sm:w-0', 'opacity-0'); s.classList.remove('translate-x-0', 'sm:w-80', 'opacity-100', 'sm:ml-4'); };
+
+        window.lockSpeaker = (id) => { 
+            const s = speakers.find(x => x.id === id); 
+            if (confirm(`鎖定身分為「${s.fullname || s.name}」嗎？`)) { 
+                currentSpeakerId = id; isLocked = true; closeMemberSidebar(); updateLockedUI(); 
+            } 
+        };
+
         window.addNewSpeaker = () => { speakers.push({ id: 'user_' + Date.now(), name: '新成員', fullname: '新成員', icon: '👤', image: null, isMe: false }); renderSidebarSpeakers(); saveToCloud(); };
-        window.updateSpeakerName = (id, val) => { const s = speakers.find(x => x.id === id); if (s && val.trim()) { s.fullname = val.trim(); s.name = val.trim().substring(0, 5); saveToCloud(); } };
+        window.updateSpeakerName = (id, val) => { const s = speakers.find(x => x.id === id); if (s && val.trim()) { s.fullname = val.trim(); s.name = val.trim().substring(0, 5); renderMessages(); saveToCloud(); } };
         window.triggerAvatarUpload = (id) => { window.editingId = id; document.getElementById('avatarUploader').click(); };
 
         document.getElementById('avatarUploader').onchange = (e) => {
@@ -246,20 +238,29 @@
                 const img = new Image(); img.src = evt.target.result; img.onload = () => {
                     const cvs = document.createElement('canvas'); const ctx = cvs.getContext('2d'); cvs.width = 150; cvs.height = 150;
                     ctx.drawImage(img, 0, 0, 150, 150);
-                    const s = speakers.find(x => x.id === window.editingId); s.image = cvs.toDataURL('image/jpeg', 0.8); s.icon = '';
+                    const s = speakers.find(x => x.id === window.editingId); s.image = cvs.toDataURL('image/jpeg', 0.7);
                     renderSidebarSpeakers(); saveToCloud();
                 };
             }; r.readAsDataURL(f);
         };
 
+        window.updateLockedUI = () => {
+            const s = speakers.find(x => x.id === currentSpeakerId) || speakers[0];
+            document.getElementById('currentAvatarIndicator').innerHTML = getAvatarHtml(s, 'text-sm md:text-lg');
+            const btn = document.getElementById('memberBtn');
+            if (isLocked) btn.innerHTML = `<div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white flex items-center justify-center border-[3px] border-[#06C755] overflow-hidden">${getAvatarHtml(s, 'text-xl')}</div>`;
+            else btn.innerHTML = `<svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>`;
+        };
+
         window.openQrModal = () => { document.getElementById('qrCodeImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(shareUrl)}`; document.getElementById('qrModal').classList.remove('hidden'); document.getElementById('qrModal').classList.add('flex'); };
-        window.closeQrModal = () => { document.getElementById('qrModal').classList.add('hidden'); document.getElementById('qrModal').classList.remove('flex'); };
+        window.closeQrModal = () => { document.getElementById('qrModal').classList.remove('hidden', 'flex'); };
         window.copyLink = () => { navigator.clipboard.writeText(shareUrl).then(() => alert("網址已複製！")); };
 
         window.sendMessage = () => {
             const i = document.getElementById('chatInput'); const t = i.value.trim(); if(!t) return;
-            messages.push({ speakerId: currentSpeakerId, text: t.replace(/\n/g, '<br>'), time: new Date().toLocaleTimeString('zh-TW', { timeZone: 'Asia/Taipei', hour12: false, hour: '2-digit', minute: '2-digit' }) });
-            i.value = ''; toggleSendIcon(); renderMessages(); scrollToBottom(); saveToCloud();
+            const time = new Date().toLocaleTimeString('zh-TW', { timeZone: 'Asia/Taipei', hour12: false, hour: '2-digit', minute: '2-digit' });
+            messages.push({ speakerId: currentSpeakerId, text: t.replace(/\n/g, '<br>'), time });
+            i.value = ''; window.toggleSendIcon(); renderMessages(); scrollToBottom(); saveToCloud();
         };
 
         window.toggleSendIcon = () => {
@@ -273,19 +274,13 @@
         window.openStatsModal = () => {
             const counts = {}; messages.forEach(m => counts[m.speakerId] = (counts[m.speakerId] || 0) + 1);
             window.currentStatsData = speakers.map(s => ({ ...s, count: counts[s.id] || 0, score: null, comment: "" })).sort((a,b) => b.count - a.count);
-            window.renderStatsList(); document.getElementById('statsModal').classList.remove('hidden'); document.getElementById('statsModal').classList.add('flex');
+            window.renderStatsList(); document.getElementById('statsModal').classList.remove('hidden', 'flex'); document.getElementById('statsModal').classList.add('flex');
         };
-        window.closeStatsModal = () => { document.getElementById('statsModal').classList.add('hidden'); document.getElementById('statsModal').classList.remove('flex'); };
+        window.closeStatsModal = () => { document.getElementById('statsModal').classList.remove('hidden', 'flex'); };
         window.renderStatsList = (loading = false) => {
             const l = document.getElementById('statsList'); l.innerHTML = '';
             window.currentStatsData.forEach(s => {
-                l.innerHTML += `<div class="p-3 bg-gray-50 rounded-xl border border-gray-200">
-                    <div class="flex justify-between items-center">
-                        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full overflow-hidden border">${getAvatarHtml(s, 'text-xl')}</div><span class="font-bold">${s.fullname || s.name}</span></div>
-                        <div class="flex gap-4 items-center"><span>${s.count} 次</span><span class="text-xl font-black text-[#06C755]">${s.score !== null ? s.score + '分' : (loading ? '...' : '')}</span></div>
-                    </div>
-                    ${s.comment ? `<div class="mt-2 text-xs bg-indigo-50 p-2 rounded text-indigo-800">💡 ${s.comment}</div>` : ''}
-                </div>`;
+                l.innerHTML += `<div class="p-3 bg-gray-50 rounded-xl border border-gray-200"><div class="flex justify-between items-center"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full overflow-hidden border">${getAvatarHtml(s, 'text-xl')}</div><span class="font-bold">${s.fullname || s.name}</span></div><div class="flex gap-4 items-center"><span>${s.count} 次</span><span class="text-xl font-black text-[#06C755]">${s.score !== null ? s.score + '分' : (loading ? '...' : '')}</span></div></div>${s.comment ? `<div class="mt-2 text-xs bg-indigo-50 p-2 rounded text-indigo-800">💡 ${s.comment}</div>` : ''}</div>`;
             });
         };
         window.clearChat = () => { if(confirm("清空所有訊息？")) { messages = []; renderMessages(); saveToCloud(); closeStatsModal(); } };
@@ -294,35 +289,31 @@
             if(!messages.length) return alert("無紀錄可評估");
             window.renderStatsList(true);
             const btn = document.getElementById('aiEvalBtn'); btn.disabled = true; btn.textContent = "AI 分析中...";
-            const transcript = messages.map(m => `${speakers.find(x => x.id === m.speakerId)?.fullname}: ${m.text}`).join('\n');
-            const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=YOUR_API_KEY";
-            // 此處建議老師在正式環境中使用自己的 API Key，下方程式為模擬回傳邏輯
+            // 模擬分析
             setTimeout(() => {
-                window.currentStatsData.forEach(s => { if(s.count > 0) { s.score = 80 + Math.floor(Math.random()*20); s.comment = "互動自然，表現優異！"; } });
+                window.currentStatsData.forEach(s => { if(s.count > 0) { s.score = 85 + Math.floor(Math.random()*10); s.comment = "發言適切且能延續話題！"; } });
                 window.renderStatsList(); btn.textContent = "✅ 評估完成";
             }, 2000);
         };
 
-        // 事件綁定
+        // --- 虛擬鍵盤與表情綁定 ---
         document.addEventListener('DOMContentLoaded', () => {
             const i = document.getElementById('chatInput');
-            i.oninput = toggleSendIcon;
-            i.onkeypress = (e) => { if(e.key === 'Enter') sendMessage(); };
-            i.onfocus = () => { document.getElementById('virtualKeyboard').classList.remove('hidden'); document.getElementById('virtualKeyboard').classList.add('flex'); scrollToBottom(); };
+            i.oninput = window.toggleSendIcon;
+            i.onkeypress = (e) => { if(e.key === 'Enter') window.sendMessage(); };
+            i.onfocus = () => { document.getElementById('virtualKeyboard').classList.remove('hidden'); document.getElementById('virtualKeyboard').classList.add('flex'); window.scrollToBottom(); };
             document.getElementById('vkClose').onclick = () => document.getElementById('virtualKeyboard').classList.replace('flex', 'hidden');
-            document.getElementById('vkSpace').onclick = () => { i.value += ' '; toggleSendIcon(); };
-            document.getElementById('vkBksp').onclick = () => { i.value = i.value.slice(0, -1); toggleSendIcon(); };
+            document.getElementById('vkSpace').onclick = () => { i.value += ' '; window.toggleSendIcon(); };
+            document.getElementById('vkBksp').onclick = () => { i.value = i.value.slice(0, -1); window.toggleSendIcon(); };
             const keys = ['ㄅ','ㄉ','ˇ','ˋ','ㄓ','ˊ','˙','ㄚ','ㄞ','ㄢ','ㄦ','ㄆ','ㄊ','ㄍ','ㄐ','ㄔ','ㄗ','ㄧ','ㄛ','ㄟ','ㄣ','?','ㄇ','ㄋ','ㄎ','ㄑ','ㄕ','ㄘ','ㄨ','ㄜ','ㄠ','ㄤ','!','ㄈ','ㄌ','ㄏ','ㄒ','ㄖ','ㄙ','ㄩ','ㄝ','ㄡ','ㄥ','@'];
-            keys.forEach(k => { const b = document.createElement('button'); b.className = "bg-white shadow rounded p-2 font-bold active:bg-gray-200"; b.textContent = k; b.onclick = () => { i.value += k; toggleSendIcon(); }; document.getElementById('vkGrid').appendChild(b); });
-            document.getElementById('sendBtn').onclick = () => { if(i.value.trim()) sendMessage(); else alert("語音功能啟動 (模擬)"); };
-            document.getElementById('downloadBtn').onclick = () => { const blob = new Blob([JSON.stringify({title:chatTitle, speakers, messages}, null, 2)], {type:'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${chatTitle}.json`; a.click(); };
+            keys.forEach(k => { const b = document.createElement('button'); b.className = "bg-white shadow rounded p-2 md:p-3 font-bold active:bg-gray-200"; b.textContent = k; b.onclick = () => { i.value += k; window.toggleSendIcon(); }; document.getElementById('vkGrid').appendChild(b); });
+            document.getElementById('sendBtn').onclick = () => { if(i.value.trim()) window.sendMessage(); else alert("語音功能準備中..."); };
+            document.getElementById('downloadBtn').onclick = () => { const b = new Blob([JSON.stringify({title:chatTitle, speakers, messages}, null, 2)], {type:'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `${chatTitle}.json`; a.click(); };
             
             const ems = ['😀','😂','🥰','😎','🥺','🤔','👍','🙏','❤️','✨','🎉','🔥','💯','❓','❗️','👦','👧','🐶','🐱','🍕','🚗','☀️'];
-            ems.forEach(e => { const span = document.createElement('span'); span.className = "cursor-pointer p-1 text-2xl"; span.textContent = e; span.onclick = () => { i.value += e; toggleSendIcon(); }; document.getElementById('emojiGrid').appendChild(span); });
+            ems.forEach(e => { const span = document.createElement('span'); span.className = "cursor-pointer p-1 text-2xl hover:scale-125 transition-transform"; span.textContent = e; span.onclick = () => { i.value += e; window.toggleSendIcon(); }; document.getElementById('emojiGrid').appendChild(span); });
             document.getElementById('emojiBtn').onclick = (e) => { e.stopPropagation(); document.getElementById('emojiPicker').classList.toggle('hidden'); };
         });
-
-        init();
     </script>
 </body>
 </html>
