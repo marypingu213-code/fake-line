@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>會話練習系統 - 多人連線版</title>
+    <!-- 使用 Tailwind CSS 快速排版 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         ::-webkit-scrollbar { display: none; }
@@ -24,10 +25,13 @@
 </head>
 <body class="bg-gray-800 h-screen w-screen flex justify-center items-center font-sans overflow-hidden relative">
 
+    <!-- App 總容器：使用 Flex 排版讓聊天室與側邊欄能並排 -->
     <div class="flex flex-row h-full w-full max-w-[80rem] sm:h-[95vh] justify-center sm:items-center transition-all duration-300 px-0 sm:px-4">
         
+        <!-- ================= 主聊天視窗 ================= -->
         <div class="w-full h-full max-w-3xl sm:rounded-[3rem] sm:border-[12px] border-gray-900 bg-[#7BA3B8] flex flex-col relative overflow-hidden shadow-2xl shrink sm:shrink-0 z-20 transition-all duration-300">
             
+            <!-- 頂部標題列 -->
             <header class="flex items-center justify-between px-4 py-4 md:py-5 text-white z-10 border-b border-white/10 shrink-0">
                 <div class="flex items-center gap-2 md:gap-4 overflow-hidden">
                     <svg class="w-6 h-6 md:w-8 md:h-8 touch-active cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
@@ -44,15 +48,17 @@
                 </div>
                 
                 <div class="flex items-center gap-3 md:gap-5 flex-shrink-0">
-                    <button onclick="openQrModal()" class="touch-active bg-white/20 p-1.5 md:p-2 rounded-xl hover:bg-white/30"><svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h3v3h-3zM20 20h-3v-3h3v3zM14 17h6M17 14v6"></path></svg></button>
-                    <button id="downloadBtn" class="touch-active"><svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></button>
-                    <button onclick="openStatsModal()" class="touch-active"><svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg></button>
-                    <div id="memberBtn" class="touch-active cursor-pointer relative" onclick="handleMemberBtnClick()"><svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg></div>
+                    <button onclick="openQrModal()" class="touch-active bg-white/20 p-1.5 md:p-2 rounded-xl hover:bg-white/30 transition-colors" title="顯示 QR Code"><svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h3v3h-3zM20 20h-3v-3h3v3zM14 17h6M17 14v6"></path></svg></button>
+                    <button id="downloadBtn" class="touch-active" title="備份對話紀錄"><svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></button>
+                    <button onclick="openStatsModal()" class="touch-active" title="參與度評估與結束"><svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg></button>
+                    <div id="memberBtn" class="touch-active cursor-pointer relative" onclick="handleMemberBtnClick()" title="選擇發言人"><svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg></div>
                 </div>
             </header>
 
+            <!-- 聊天內容區 -->
             <main id="chatBox" class="flex-1 overflow-y-auto px-4 py-2 flex flex-col gap-5 pb-4 scroll-smooth"></main>
 
+            <!-- 底部輸入區 -->
             <div class="bg-[#F3F4F6] px-3 py-3 md:px-5 md:py-4 flex items-center gap-2 md:gap-3 pb-6 sm:pb-4 border-t border-gray-300 relative z-30 shrink-0">
                 <svg class="w-7 h-7 md:w-9 md:h-9 text-gray-500 hidden md:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 <svg class="w-7 h-7 md:w-9 md:h-9 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><circle cx="12" cy="13" r="3" stroke="currentColor" stroke-width="2"></circle></svg>
@@ -68,65 +74,73 @@
                 </div>
                 
                 <button id="sendBtn" class="text-gray-500 hover:text-[#06C755] touch-active p-1 transition-colors relative">
-                    <svg id="micIcon" class="w-7 h-7 md:w-9 md:h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+                    <svg id="micIcon" class="w-7 h-7 md:w-9 md:h-9 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
                     <svg id="planeIcon" class="w-7 h-7 md:w-9 md:h-9 hidden text-[#06C755]" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path></svg>
                 </button>
             </div>
 
+            <!-- 虛擬鍵盤 (主視窗內部) -->
             <div id="virtualKeyboard" class="hidden bg-[#D1D5DB] p-2 md:p-4 flex-col gap-1 md:gap-2 shadow-[inset_0_4px_6px_-1px_rgba(0,0,0,0.1)] z-20 shrink-0">
                 <div class="flex justify-between items-center mb-1 px-1">
                     <span class="text-xs text-gray-600 font-bold">注音虛擬鍵盤</span>
-                    <button id="vkClose" class="text-gray-700 bg-gray-200 px-3 py-1 rounded-lg shadow border border-gray-300 text-sm">▼ 關閉</button>
+                    <button id="vkClose" class="text-gray-700 bg-gray-200 px-3 py-1 rounded-lg shadow border border-gray-300 text-sm active:bg-gray-400">▼ 關閉</button>
                 </div>
                 <div id="vkGrid" class="grid grid-cols-11 gap-1 md:gap-2"></div>
                 <div class="grid grid-cols-4 gap-1 md:gap-2 mt-1 md:mt-2">
-                    <button id="vkSpace" class="col-span-3 bg-white shadow rounded-lg p-2 md:p-3 text-lg font-bold">空白鍵 Space</button>
-                    <button id="vkBksp" class="col-span-1 bg-[#9CA3AF] text-white shadow rounded-lg p-2 md:p-3 text-lg font-bold">⌫ 退格</button>
+                    <button id="vkSpace" class="col-span-3 bg-white shadow rounded-lg p-2 md:p-3 text-lg font-bold active:bg-gray-200 touch-active">空白鍵 Space</button>
+                    <button id="vkBksp" class="col-span-1 bg-[#9CA3AF] text-white shadow rounded-lg p-2 md:p-3 text-lg font-bold active:bg-gray-500 touch-active">⌫ 退格</button>
                 </div>
             </div>
         </div>
 
+        <!-- ================= 名單管理側邊欄 ================= -->
         <div id="memberSidebar" class="fixed inset-y-0 right-0 z-50 w-full sm:relative sm:inset-auto sm:z-10 h-full sm:h-[calc(100%-24px)] sm:w-0 overflow-hidden bg-white sm:rounded-[2.25rem] flex flex-col shadow-2xl transition-all duration-300 opacity-0 translate-x-full sm:translate-x-0 sm:ml-0">
             <div class="w-full sm:w-80 h-full flex flex-col min-w-full sm:min-w-[20rem]">
                 <div class="p-4 md:p-5 border-b flex justify-between items-center bg-gray-50 shrink-0">
                     <h2 class="text-xl font-bold text-gray-800">名單管理</h2>
-                    <button onclick="closeMemberSidebar()" class="text-gray-500 hover:text-gray-800 p-1 bg-white rounded-full shadow-sm border border-gray-200"><svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button>
+                    <button onclick="closeMemberSidebar()" class="text-gray-500 hover:text-gray-800 p-1 bg-white rounded-full shadow-sm border border-gray-200 active:scale-95"><svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button>
                 </div>
                 <div class="px-4 pt-3 pb-1 text-xs text-gray-500 shrink-0">點擊頭像上傳圖片；點擊名稱可直接修改。</div>
-                <div id="sidebarSpeakerList" class="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
-                    </div>
+                <div id="sidebarSpeakerList" class="flex-1 overflow-y-auto p-4 flex flex-col gap-3"></div>
                 <div class="p-4 border-t bg-gray-50 pb-8 sm:pb-4 shrink-0">
-                    <button onclick="addNewSpeaker()" class="w-full py-3 md:py-4 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-xl flex items-center justify-center gap-2">➕ 新增成員</button>
+                    <button onclick="addNewSpeaker()" class="w-full py-3 md:py-4 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-xl flex items-center justify-center gap-2 active:scale-95">➕ 新增成員</button>
                 </div>
                 <input type="file" id="avatarUploader" class="hidden" accept="image/*">
             </div>
         </div>
     </div>
 
-    <div id="qrModal" class="fixed inset-0 bg-black/60 z-50 hidden justify-center items-center backdrop-blur-sm">
-        <div class="bg-white rounded-3xl p-8 max-w-sm w-[90%] flex flex-col items-center shadow-2xl relative">
-            <button onclick="closeQrModal()" class="absolute top-4 right-4 text-gray-400"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button>
+    <!-- 背景遮罩 (供手機版使用) -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/40 z-40 hidden sm:hidden" onclick="closeMemberSidebar()"></div>
+
+    <!-- ================= 邀請 QR Code 彈窗 ================= -->
+    <div id="qrModal" class="fixed inset-0 bg-black/60 z-50 hidden justify-center items-center backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-[90%] flex flex-col items-center shadow-2xl relative animate-pop-in">
+            <button onclick="closeQrModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 p-1 bg-gray-100 rounded-full active:scale-95"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button>
             <h2 class="text-2xl font-bold text-gray-800 mb-2">邀請學生加入</h2>
+            <p class="text-sm text-gray-500 mb-6 text-center">請掃描下方 QR Code 即可連線</p>
             <div class="bg-gray-100 p-4 rounded-2xl mb-6"><img id="qrCodeImg" src="" alt="QR Code" class="w-48 h-48"></div>
-            <button onclick="copyLink()" class="w-full py-3 bg-[#06C755] text-white font-bold rounded-xl active:scale-95">複製連線網址</button>
+            <button onclick="copyLink()" class="w-full py-3 bg-[#06C755] hover:bg-[#05a546] text-white font-bold rounded-xl active:scale-95 transition-all">複製連線網址</button>
         </div>
     </div>
 
-    <div id="statsModal" class="fixed inset-0 bg-black/60 z-50 hidden justify-center items-center backdrop-blur-sm">
-        <div class="bg-white rounded-3xl p-6 md:p-8 max-w-lg w-[90%] flex flex-col shadow-2xl relative max-h-[85vh]">
-            <button onclick="closeStatsModal()" class="absolute top-4 right-4 text-gray-400"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button>
+    <!-- ================= 統計與 AI 評估彈窗 ================= -->
+    <div id="statsModal" class="fixed inset-0 bg-black/60 z-50 hidden justify-center items-center backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-3xl p-6 md:p-8 max-w-lg w-[90%] flex flex-col shadow-2xl relative max-h-[85vh] animate-pop-in">
+            <button onclick="closeStatsModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 p-1 bg-gray-100 rounded-full active:scale-95"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button>
             <h2 class="text-2xl font-bold text-gray-800 mb-2 text-center">📊 參與度評估</h2>
             <div id="statsList" class="flex-1 overflow-y-auto pr-2 flex flex-col gap-3"></div>
             <div class="mt-6 flex flex-col gap-3 shrink-0">
-                <button id="aiEvalBtn" onclick="runAIEvaluation()" class="w-full py-3 bg-indigo-500 text-white font-bold rounded-xl">🤖 產生 AI 智能評估與回饋</button>
+                <button id="aiEvalBtn" onclick="runAIEvaluation()" class="w-full py-3 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-xl active:scale-95 transition-all">🤖 產生 AI 智能評估與回饋</button>
                 <div class="flex gap-3">
-                    <button onclick="closeStatsModal()" class="flex-1 py-3 bg-gray-200 rounded-xl font-bold">繼續</button>
-                    <button onclick="clearChat()" class="flex-1 py-3 bg-red-500 text-white rounded-xl font-bold">清空重置</button>
+                    <button onclick="closeStatsModal()" class="flex-1 py-3 bg-gray-200 hover:bg-gray-300 rounded-xl font-bold active:scale-95">繼續對話</button>
+                    <button onclick="clearChat()" class="flex-1 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold active:scale-95">清空重置</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- 載入 Firebase 模組 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
@@ -161,7 +175,9 @@
         const urlParams = new URLSearchParams(window.location.search);
         let sessionId = urlParams.get('session') || Math.random().toString(36).substring(2, 9);
         let shareUrl = window.location.origin + window.location.pathname + '?session=' + sessionId;
-        if (!urlParams.get('session')) window.history.replaceState({}, '', shareUrl);
+        if (!urlParams.get('session')) {
+            try { window.history.replaceState({}, '', shareUrl); } catch(e){}
+        }
 
         const docRef = doc(db, 'chatSessions', sessionId);
 
@@ -191,7 +207,7 @@
             await setDoc(docRef, { title: chatTitle, speakers, messages, updatedAt: new Date().toISOString() }, { merge: true });
         }
 
-        // --- 名單與對話核心函式 ---
+        // --- 介面渲染函式 ---
         window.getAvatarHtml = (s, cls) => s.image ? `<img src="${s.image}" class="w-full h-full object-cover">` : `<span class="${cls}">${s.icon}</span>`;
         window.scrollToBottom = () => { setTimeout(() => { const b = document.getElementById('chatBox'); if(b) b.scrollTo({top: b.scrollHeight, behavior:'smooth'}); }, 100); };
 
@@ -218,8 +234,8 @@
         };
 
         window.handleMemberBtnClick = () => { if (isLocked) alert("🔒 身分已鎖定，更換請重新整理頁面。"); else openMemberSidebar(); };
-        window.openMemberSidebar = () => { renderSidebarSpeakers(); const s = document.getElementById('memberSidebar'); s.classList.remove('translate-x-full', 'sm:w-0', 'opacity-0'); s.classList.add('translate-x-0', 'sm:w-80', 'opacity-100', 'sm:ml-4'); };
-        window.closeMemberSidebar = () => { const s = document.getElementById('memberSidebar'); s.classList.add('translate-x-full', 'sm:w-0', 'opacity-0'); s.classList.remove('translate-x-0', 'sm:w-80', 'opacity-100', 'sm:ml-4'); };
+        window.openMemberSidebar = () => { renderSidebarSpeakers(); const s = document.getElementById('memberSidebar'); s.classList.remove('translate-x-full', 'sm:w-0', 'opacity-0'); s.classList.add('translate-x-0', 'sm:w-80', 'opacity-100', 'sm:ml-4'); document.getElementById('sidebarOverlay').classList.remove('hidden');};
+        window.closeMemberSidebar = () => { const s = document.getElementById('memberSidebar'); s.classList.add('translate-x-full', 'sm:w-0', 'opacity-0'); s.classList.remove('translate-x-0', 'sm:w-80', 'opacity-100', 'sm:ml-4'); document.getElementById('sidebarOverlay').classList.add('hidden');};
 
         window.lockSpeaker = (id) => { 
             const s = speakers.find(x => x.id === id); 
@@ -252,8 +268,14 @@
             else btn.innerHTML = `<svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>`;
         };
 
-        window.openQrModal = () => { document.getElementById('qrCodeImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(shareUrl)}`; document.getElementById('qrModal').classList.remove('hidden'); document.getElementById('qrModal').classList.add('flex'); };
-        window.closeQrModal = () => { document.getElementById('qrModal').classList.remove('hidden', 'flex'); };
+        // --- 彈窗修復重點：正確的 add('hidden') 與 remove('flex') ---
+        window.openQrModal = () => { 
+            document.getElementById('qrCodeImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(shareUrl)}`; 
+            const m = document.getElementById('qrModal'); m.classList.remove('hidden'); m.classList.add('flex'); 
+        };
+        window.closeQrModal = () => { 
+            const m = document.getElementById('qrModal'); m.classList.add('hidden'); m.classList.remove('flex'); 
+        };
         window.copyLink = () => { navigator.clipboard.writeText(shareUrl).then(() => alert("網址已複製！")); };
 
         window.sendMessage = () => {
@@ -274,40 +296,87 @@
         window.openStatsModal = () => {
             const counts = {}; messages.forEach(m => counts[m.speakerId] = (counts[m.speakerId] || 0) + 1);
             window.currentStatsData = speakers.map(s => ({ ...s, count: counts[s.id] || 0, score: null, comment: "" })).sort((a,b) => b.count - a.count);
-            window.renderStatsList(); document.getElementById('statsModal').classList.remove('hidden', 'flex'); document.getElementById('statsModal').classList.add('flex');
+            window.renderStatsList(); 
+            const m = document.getElementById('statsModal'); m.classList.remove('hidden'); m.classList.add('flex');
         };
-        window.closeStatsModal = () => { document.getElementById('statsModal').classList.remove('hidden', 'flex'); };
+        window.closeStatsModal = () => { 
+            const m = document.getElementById('statsModal'); m.classList.add('hidden'); m.classList.remove('flex'); 
+        };
         window.renderStatsList = (loading = false) => {
             const l = document.getElementById('statsList'); l.innerHTML = '';
             window.currentStatsData.forEach(s => {
-                l.innerHTML += `<div class="p-3 bg-gray-50 rounded-xl border border-gray-200"><div class="flex justify-between items-center"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full overflow-hidden border">${getAvatarHtml(s, 'text-xl')}</div><span class="font-bold">${s.fullname || s.name}</span></div><div class="flex gap-4 items-center"><span>${s.count} 次</span><span class="text-xl font-black text-[#06C755]">${s.score !== null ? s.score + '分' : (loading ? '...' : '')}</span></div></div>${s.comment ? `<div class="mt-2 text-xs bg-indigo-50 p-2 rounded text-indigo-800">💡 ${s.comment}</div>` : ''}</div>`;
+                l.innerHTML += `<div class="p-3 bg-gray-50 rounded-xl border border-gray-200"><div class="flex justify-between items-center"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full overflow-hidden border bg-white flex justify-center items-center">${getAvatarHtml(s, 'text-xl')}</div><span class="font-bold">${s.fullname || s.name}</span></div><div class="flex gap-4 items-center"><span>${s.count} 次</span><span class="text-xl font-black text-[#06C755]">${s.score !== null ? s.score + '分' : (loading ? '...' : '')}</span></div></div>${s.comment ? `<div class="mt-2 text-xs bg-indigo-50 p-2 rounded text-indigo-800">💡 ${s.comment}</div>` : ''}</div>`;
             });
         };
-        window.clearChat = () => { if(confirm("清空所有訊息？")) { messages = []; renderMessages(); saveToCloud(); closeStatsModal(); } };
+        window.clearChat = () => { if(confirm("確定清空所有訊息？")) { messages = []; renderMessages(); saveToCloud(); window.closeStatsModal(); } };
 
         window.runAIEvaluation = async () => {
             if(!messages.length) return alert("無紀錄可評估");
             window.renderStatsList(true);
             const btn = document.getElementById('aiEvalBtn'); btn.disabled = true; btn.textContent = "AI 分析中...";
-            // 模擬分析
+            
+            // AI 模擬評分邏輯 (為確保教學流暢，此處使用自動評估)
             setTimeout(() => {
-                window.currentStatsData.forEach(s => { if(s.count > 0) { s.score = 85 + Math.floor(Math.random()*10); s.comment = "發言適切且能延續話題！"; } });
+                window.currentStatsData.forEach(s => { 
+                    if(s.count > 0) { 
+                        s.score = 75 + Math.floor(Math.random()*20); 
+                        s.comment = s.score >= 85 ? "能主動延續話題，非常有禮貌！" : "有參與對話，可以試著多說幾句喔！"; 
+                    } else {
+                        s.score = 0; s.comment = "尚未發言，下次記得多開口喔！";
+                    }
+                });
                 window.renderStatsList(); btn.textContent = "✅ 評估完成";
-            }, 2000);
+            }, 1500);
         };
 
-        // --- 虛擬鍵盤與表情綁定 ---
+        // --- 語音輸入與介面事件綁定 ---
         document.addEventListener('DOMContentLoaded', () => {
             const i = document.getElementById('chatInput');
             i.oninput = window.toggleSendIcon;
             i.onkeypress = (e) => { if(e.key === 'Enter') window.sendMessage(); };
             i.onfocus = () => { document.getElementById('virtualKeyboard').classList.remove('hidden'); document.getElementById('virtualKeyboard').classList.add('flex'); window.scrollToBottom(); };
-            document.getElementById('vkClose').onclick = () => document.getElementById('virtualKeyboard').classList.replace('flex', 'hidden');
+            document.getElementById('vkClose').onclick = () => { document.getElementById('virtualKeyboard').classList.add('hidden'); document.getElementById('virtualKeyboard').classList.remove('flex'); };
             document.getElementById('vkSpace').onclick = () => { i.value += ' '; window.toggleSendIcon(); };
             document.getElementById('vkBksp').onclick = () => { i.value = i.value.slice(0, -1); window.toggleSendIcon(); };
+            
             const keys = ['ㄅ','ㄉ','ˇ','ˋ','ㄓ','ˊ','˙','ㄚ','ㄞ','ㄢ','ㄦ','ㄆ','ㄊ','ㄍ','ㄐ','ㄔ','ㄗ','ㄧ','ㄛ','ㄟ','ㄣ','?','ㄇ','ㄋ','ㄎ','ㄑ','ㄕ','ㄘ','ㄨ','ㄜ','ㄠ','ㄤ','!','ㄈ','ㄌ','ㄏ','ㄒ','ㄖ','ㄙ','ㄩ','ㄝ','ㄡ','ㄥ','@'];
-            keys.forEach(k => { const b = document.createElement('button'); b.className = "bg-white shadow rounded p-2 md:p-3 font-bold active:bg-gray-200"; b.textContent = k; b.onclick = () => { i.value += k; window.toggleSendIcon(); }; document.getElementById('vkGrid').appendChild(b); });
-            document.getElementById('sendBtn').onclick = () => { if(i.value.trim()) window.sendMessage(); else alert("語音功能準備中..."); };
+            keys.forEach(k => { const b = document.createElement('button'); b.className = "bg-white shadow rounded p-2 md:p-3 font-bold active:bg-gray-200 active:scale-95 transition-all"; b.textContent = k; b.onclick = () => { i.value += k; window.toggleSendIcon(); }; document.getElementById('vkGrid').appendChild(b); });
+            
+            // 【修復】完整恢復麥克風語音辨識功能
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            let recognition;
+            if (SpeechRecognition) {
+                recognition = new SpeechRecognition();
+                recognition.lang = 'zh-TW';
+                recognition.interimResults = false;
+                recognition.onstart = () => { 
+                    document.getElementById('micIcon').classList.add('text-red-500', 'animate-pulse'); 
+                    i.placeholder = "請開始說話..."; 
+                };
+                recognition.onresult = (event) => { 
+                    i.value += event.results[0][0].transcript; 
+                    window.toggleSendIcon(); 
+                };
+                recognition.onend = () => { 
+                    document.getElementById('micIcon').classList.remove('text-red-500', 'animate-pulse'); 
+                    i.placeholder = "輸入訊息..."; 
+                };
+                recognition.onerror = (e) => { 
+                    document.getElementById('micIcon').classList.remove('text-red-500', 'animate-pulse'); 
+                    i.placeholder = "輸入訊息..."; 
+                    if(e.error === 'not-allowed') alert("請允許使用麥克風權限才能語音輸入喔！"); 
+                };
+            }
+
+            document.getElementById('sendBtn').onclick = () => { 
+                if(i.value.trim()) { 
+                    window.sendMessage(); 
+                } else { 
+                    if (recognition) recognition.start(); 
+                    else alert("您的瀏覽器不支援語音輸入功能（建議使用 Chrome、Edge 或 Safari）。"); 
+                } 
+            };
+            
             document.getElementById('downloadBtn').onclick = () => { const b = new Blob([JSON.stringify({title:chatTitle, speakers, messages}, null, 2)], {type:'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `${chatTitle}.json`; a.click(); };
             
             const ems = ['😀','😂','🥰','😎','🥺','🤔','👍','🙏','❤️','✨','🎉','🔥','💯','❓','❗️','👦','👧','🐶','🐱','🍕','🚗','☀️'];
