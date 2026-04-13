@@ -29,16 +29,21 @@
         .accordion-content.open { max-height: 800px; opacity: 1; }
         .rotate-180 { transform: rotate(180deg); }
 
-        /* ================= 🖨️ 專屬列印排版樣式 ================= */
+        /* ================= 🖨️ 專屬 A4 完美滿版列印樣式 ================= */
         #printArea { position: absolute; left: -9999px; top: -9999px; width: 21cm; visibility: hidden; z-index: -1; background: white; }
         
         @media print {
+            @page { size: A4 portrait; margin: 5mm; } /* 強制縮減頁面邊界留白 */
             body { background-color: white !important; overflow: visible !important; height: auto !important; width: 100% !important; margin: 0; padding: 0; }
             body > div:not(#printArea) { display: none !important; }
             #printArea { display: block !important; position: relative !important; left: 0 !important; top: 0 !important; width: 100% !important; visibility: visible !important; margin: 0; padding: 0; }
             
-            /* 調整邊距與分頁，讓A4完美滿版 */
-            .print-page { page-break-after: always; break-after: page; padding: 0.5cm; margin-bottom: 0cm; box-sizing: border-box; }
+            /* 每張獨立一頁，強制最大高度避免跨頁 */
+            .print-page { 
+                page-break-after: always; break-after: page; 
+                padding: 2mm 5mm; margin: 0 auto; box-sizing: border-box; 
+                width: 100%; max-height: 287mm; overflow: hidden;
+            }
             .print-page:last-child { page-break-after: auto; break-after: auto; }
             .print-break-inside-avoid { break-inside: avoid; page-break-inside: avoid; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -53,6 +58,7 @@
         <!-- ================= 主聊天視窗 ================= -->
         <div class="w-full h-full max-w-3xl sm:rounded-[3rem] sm:border-[12px] border-gray-900 bg-[#7BA3B8] flex flex-col relative overflow-hidden shadow-2xl shrink sm:shrink-0 z-20 transition-all duration-300">
             
+            <!-- 頂部標題列 -->
             <header class="flex items-center justify-between px-4 py-4 md:py-5 text-white z-10 border-b border-white/10 shrink-0">
                 <div class="flex items-center gap-2 md:gap-4 overflow-hidden">
                     <svg class="w-6 h-6 md:w-8 md:h-8 touch-active cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
@@ -73,6 +79,7 @@
                     <button id="uploadBtn" class="touch-active bg-white/20 p-1.5 md:p-2 rounded-xl hover:bg-white/30 transition-colors" title="讀取對話紀錄 (.json)"><svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg></button>
                     <button id="downloadBtn" class="touch-active" title="備份對話紀錄"><svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></button>
                     
+                    <!-- 結束對話並評估按鈕 -->
                     <button onclick="openStatsModal()" class="touch-active bg-red-500/90 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-xl hover:bg-red-500 transition-colors flex items-center gap-1 font-bold text-sm md:text-base shadow-sm" title="結束對話並評估">
                         <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path></svg>
                         <span class="hidden sm:inline">結束對話</span>
@@ -157,7 +164,7 @@
         </div>
     </div>
 
-    <!-- ================= 個別學生詳細 15 指標與雷達圖分析彈窗 ================= -->
+    <!-- ================= 個別學生詳細 15 指標與雷達圖分析彈窗 (Web 介面版) ================= -->
     <div id="detailModal" class="fixed inset-0 bg-black/60 z-[60] hidden justify-center items-center backdrop-blur-sm transition-opacity">
         <div class="bg-white sm:rounded-3xl p-6 md:p-8 max-w-2xl w-full sm:w-[95%] h-full sm:h-[90vh] flex flex-col shadow-2xl relative animate-pop-in">
             <div class="absolute top-4 right-4 flex gap-2">
@@ -167,19 +174,16 @@
                 <button onclick="closeDetailModal()" class="text-gray-400 hover:text-gray-800 p-1 bg-gray-100 rounded-full active:scale-95"><svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button>
             </div>
             
-            <!-- A(頭像名字) | B(總分) | C(雷達圖) 完美三等分並排 -->
+            <!-- Web: A(頭像名字) | B(總分) | C(雷達圖) 完美三等分並排 -->
             <div class="flex items-center justify-between bg-indigo-50/30 border border-indigo-100 rounded-2xl p-4 mb-4 shrink-0 mt-6 sm:mt-0">
-                <!-- A: 頭像與名字 -->
                 <div class="flex flex-col items-center justify-center w-[25%] border-r-2 border-indigo-100">
                     <div id="detailAvatar" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-white overflow-hidden flex justify-center items-center text-3xl bg-gray-100 shadow-sm mb-1"></div>
                     <h2 id="detailName" class="text-lg sm:text-xl font-bold text-gray-800 text-center">學生名稱</h2>
                 </div>
-                <!-- B: 總合評分 -->
                 <div class="flex flex-col items-center justify-center w-[25%] border-r-2 border-indigo-100 px-2">
                     <span class="text-[10px] sm:text-xs text-gray-500 font-bold block mb-1 text-center whitespace-nowrap">總合表現評分</span>
                     <span id="detailTotalScore" class="text-4xl sm:text-5xl font-black text-indigo-600 drop-shadow-sm">0</span>
                 </div>
-                <!-- C: 雷達圖 -->
                 <div class="w-[50%] flex justify-center items-center h-[120px] sm:h-[150px] relative px-2">
                     <canvas id="radarChart"></canvas>
                 </div>
@@ -187,7 +191,6 @@
             
             <div class="flex-1 overflow-y-auto pr-2 flex flex-col gap-3">
                 <p class="text-xs text-gray-500 text-center border-b pb-2">點擊下方各向度，查看 15 項核心指標的細節描述與配分：</p>
-                <!-- 向度列表 (折疊面板) -->
                 <div id="detailDimensions" class="flex flex-col gap-3 pb-4">
                     <!-- JS 動態生成 -->
                 </div>
@@ -445,29 +448,29 @@
                     
                     s.dimensions = [
                         { name: "一、語意邏輯與內容質量", indicators: [
-                            evaluateInd("指標1(主題一致性)", "評估發言是否緊扣討論核心。", baseS, "發言精準切中要點，能帶領討論方向。", "多數時候能維持在主題內，表現平穩。", "較容易發散，建議發言前多扣緊核心。"),
-                            evaluateInd("指標2(脈絡銜接度)", "評估是否能接續他人提問。", baseS, "承先啟後能力極佳，對話流暢。", "能針對同學的問題給予適當的回應。", "多為獨立發言，較少去承接他人的話題。"),
-                            evaluateInd("指標3(訊息清晰度)", "評估語句是否完整易讀。", baseS, "表達清晰透徹，毫無語意模糊的狀況。", "語句通順，基本溝通無礙。", "部分句子較為破碎，需稍加猜測語意。")
+                            evaluateInd("指標1(主題一致性)", "發言能緊扣討論核心。", baseS, "發言精準切中要點，能帶領討論方向。", "多數時候能維持在主題內，表現平穩。", "較容易發散，建議發言前多扣緊核心。"),
+                            evaluateInd("指標2(脈絡銜接度)", "能接續他人提問。", baseS, "承先啟後能力極佳，對話流暢。", "能針對同學的問題給予適當的回應。", "多為獨立發言，較少去承接他人的話題。"),
+                            evaluateInd("指標3(訊息清晰度)", "語句完整易讀。", baseS, "表達清晰透徹，毫無語意模糊的狀況。", "語句通順，基本溝通無礙。", "部分句子較為破碎，需稍加猜測語意。")
                         ]},
                         { name: "二、互動時效與參與行為", indicators: [
-                            evaluateInd("指標4(回應潛伏期)", "評估回應速度是否夠快。", baseS, "回覆極為迅速，高度參與對話。", "回應速度正常，能跟上大家節奏。", "較晚才做出回應，容易錯過討論時機。"),
-                            evaluateInd("指標5(發言密度)", "評估頻率是否適中且無洗版。", baseS, "發言節奏掌控極佳，不會過度洗版。", "發言頻率適中，符合一般討論情境。", "發言稍微密集或太少，需注意頻率。"),
-                            evaluateInd("指標6(話題主導)", "評估能否適時拋出新想法。", baseS, "能主動提出新觀點，激發群組思考。", "偶爾能提出想法，多為附和居多。", "多半順著他人的話題走，較少主動提問。")
+                            evaluateInd("指標4(回應潛伏期)", "回應速度非常快。", baseS, "回覆極為迅速，高度參與對話。", "回應速度正常，能跟上大家節奏。", "較晚才做出回應，容易錯過討論時機。"),
+                            evaluateInd("指標5(發言密度)", "頻率適中，無洗版情形。", baseS, "發言節奏掌控極佳，不會過度洗版。", "發言頻率適中，符合一般討論情境。", "發言稍微密集或太少，需注意頻率。"),
+                            evaluateInd("指標6(話題主導)", "能適時拋出新想法。", baseS, "能主動提出新觀點，激發群組思考。", "偶爾能提出想法，多為附和居多。", "多半順著他人的話題走，較少主動提問。")
                         ]},
                         { name: "三、數位表達與符號素養", indicators: [
-                            evaluateInd("指標7(非語文運用)", "評估貼圖表情使用是否精準。", baseS, "能完美運用表情貼圖來豐富語氣。", "有使用貼圖輔助，表現中規中矩。", "極少使用貼圖，文字看起來較為生硬。"),
-                            evaluateInd("指標8(功能標籤)", "評估是否熟練掌握通訊功能。", baseS, "非常熟悉各種數位通訊的表達方式。", "具備基本的數位軟體操作概念。", "數位工具使用上看起來較為生疏。"),
-                            evaluateInd("指標9(分段可讀)", "評估訊息長度是否適合閱讀。", baseS, "分段排版極佳，非常適合螢幕閱讀。", "文字長度適中，不會造成閱讀負擔。", "有時句子太長未斷句，影響閱讀體驗。")
+                            evaluateInd("指標7(非語文運用)", "貼圖表情使用精準。", baseS, "能完美運用表情貼圖來豐富語氣。", "有使用貼圖輔助，表現中規中矩。", "極少使用貼圖，文字看起來較為生硬。"),
+                            evaluateInd("指標8(功能標籤)", "熟練掌握通訊功能。", baseS, "非常熟悉各種數位通訊的表達方式。", "具備基本的數位軟體操作概念。", "數位工具使用上看起來較為生疏。"),
+                            evaluateInd("指標9(分段可讀)", "訊息長度適合螢幕閱讀。", baseS, "分段排版極佳，非常適合螢幕閱讀。", "文字長度適中，不會造成閱讀負擔。", "有時句子太長未斷句，影響閱讀體驗。")
                         ]},
                         { name: "四、社交情緒與協作態度", indicators: [
-                            evaluateInd("指標10(情感色彩)", "評估討論態度是否正向積極。", baseS, "態度極度正向，能感染群組氣氛。", "態度友善，能維持良好的互動關係。", "發言稍微平淡，可以多展現一點熱情。"),
-                            evaluateInd("指標11(支持性回饋)", "評估是否有給予同儕肯定。", baseS, "經常給予同學鼓勵與讚美，非常棒！", "偶爾會給予同學正向的回饋。", "較少給予同學支持性的言語。"),
-                            evaluateInd("指標12(衝突處理)", "評估討論氣氛是否融洽和諧。", baseS, "能營造極佳的團隊和諧感。", "與同學相處融洽，無任何摩擦。", "溝通上稍嫌直白，需注意團隊氣氛。")
+                            evaluateInd("指標10(情感色彩)", "討論態度正向積極。", baseS, "態度極度正向，能感染群組氣氛。", "態度友善，能維持良好的互動關係。", "發言稍微平淡，可以多展現一點熱情。"),
+                            evaluateInd("指標11(支持性回饋)", "有給予同儕鼓勵與肯定。", baseS, "經常給予同學鼓勵與讚美，非常棒！", "偶爾會給予同學正向的回饋。", "較少給予同學支持性的言語。"),
+                            evaluateInd("指標12(衝突處理)", "討論氣氛融洽和諧。", baseS, "能營造極佳的團隊和諧感。", "與同學相處融洽，無任何摩擦。", "溝通上稍嫌直白，需注意團隊氣氛。")
                         ]},
                         { name: "五、語言規範與適切性", indicators: [
-                            evaluateInd("指標13(錯別字與注音)", "評估用字是否精確無錯字。", baseS, "用字遣詞極為精準，完全沒有錯別字。", "偶有錯字但不影響整體語意理解。", "錯別字或注音文較多，需多加注意。"),
-                            evaluateInd("指標14(語氣合宜度)", "評估是否使用適當語氣對話。", baseS, "語氣非常得體，充分展現良好禮貌。", "使用的語氣正常合宜。", "語氣有時較為隨便，可稍微調整。"),
-                            evaluateInd("指標15(言簡意賅)", "評估表達是否精煉不拖沓。", baseS, "表達一針見血，非常精煉有重點。", "能用適當的字數把事情交代清楚。", "有時表達稍微冗長，可以再更簡潔些。")
+                            evaluateInd("指標13(錯別字與注音)", "用字精確，無錯字。", baseS, "用字遣詞極為精準，完全沒有錯別字。", "偶有錯字但不影響整體語意理解。", "錯別字或注音文較多，需多加注意。"),
+                            evaluateInd("指標14(語氣合宜度)", "使用適當的語氣對話。", baseS, "語氣非常得體，充分展現良好禮貌。", "使用的語氣正常合宜。", "語氣有時較為隨便，可稍微調整。"),
+                            evaluateInd("指標15(言簡意賅)", "表達精煉，不拖沓。", baseS, "表達一針見血，非常精煉有重點。", "能用適當的字數把事情交代清楚。", "有時表達稍微冗長，可以再更簡潔些。")
                         ]}
                     ];
                     
@@ -481,7 +484,7 @@
             }, 2000);
         };
 
-        // --- 詳細分析彈窗邏輯 ---
+        // --- 詳細分析彈窗邏輯 (Web UI) ---
         window.openDetailModal = (id) => {
             const s = window.currentStatsData.find(x => x.id === id);
             if (!s || !s.dimensions) return;
@@ -512,6 +515,7 @@
                     }]
                 },
                 options: {
+                    devicePixelRatio: 2, // Web 畫面也是用高解析渲染
                     responsive: true, maintainAspectRatio: false,
                     scales: { r: { min: 0, max: 100, ticks: { stepSize: 20, display: false }, pointLabels: { font: { size: 11, weight: 'bold' }, color: '#4B5563' } } },
                     plugins: { legend: { display: false } }
@@ -523,14 +527,14 @@
             s.dimensions.forEach((dim, idx) => {
                 let indicatorsHtml = '';
                 dim.indicators.forEach(ind => {
-                    // 指標：排版為左(名稱+分數) 右(固定描述+動態描述)
+                    // Web: (名稱+分數) 拉出左方空間 | (固定描述+動態評論)
                     indicatorsHtml += `
-                        <div class="flex items-start gap-3 mb-2.5 pb-2.5 border-b border-gray-100 last:border-0 last:pb-0">
-                            <div class="w-[120px] shrink-0">
+                        <div class="flex items-stretch gap-3 mb-2.5 pb-2.5 border-b border-gray-100 last:border-0 last:pb-0">
+                            <div class="w-[140px] shrink-0 flex flex-col justify-center">
                                 <div class="text-[13px] font-bold text-gray-800 leading-tight">${ind.name}</div>
-                                <div class="text-[14px] font-black text-indigo-600 mt-0.5">${ind.score}<span class="text-[10px] font-normal text-gray-500 ml-0.5">分</span></div>
+                                <div class="text-[18px] font-black text-indigo-600 mt-1">${ind.score}<span class="text-[10px] font-normal text-gray-500 ml-0.5">分</span></div>
                             </div>
-                            <div class="flex flex-col border-l-2 border-indigo-200 pl-3 flex-1">
+                            <div class="flex flex-col border-l-2 border-indigo-200 pl-4 flex-1 justify-center">
                                 <span class="text-[11px] text-gray-400 mb-1 leading-tight">${ind.desc}</span>
                                 <span class="text-[13px] text-gray-700 font-medium leading-snug">${ind.comment}</span>
                             </div>
@@ -571,7 +575,7 @@
             }
         };
 
-        // ================= 🖨️ A4 獨立完美列印系統 (重構支援 Chart.js 離線渲染) =================
+        // ================= 🖨️ A4 獨立完美滿版列印系統 (解決模糊與跨頁) =================
         window.triggerPrint = (studentId = null) => {
             let targetStudents = window.currentStatsData;
             if (studentId) targetStudents = window.currentStatsData.filter(s => s.id === studentId);
@@ -586,26 +590,27 @@
             window.printCharts = [];
 
             targetStudents.forEach((s, index) => {
+                // 列印版指標排版：極致壓縮空間保證不跨頁
                 let dimHtml = '<div class="flex flex-col gap-1.5 mt-2">';
                 s.dimensions.forEach(dim => {
                     let indHtml = dim.indicators.map(ind => `
-                        <div class="flex items-start gap-2 mb-1.5 pb-1.5 border-b border-gray-100 last:border-0 last:pb-0">
-                            <div class="w-[110px] shrink-0">
-                                <div class="text-[12px] font-bold text-gray-800 leading-tight">${ind.name}</div>
-                                <div class="text-[13px] font-black text-indigo-600 mt-0.5">${ind.score}<span class="text-[9px] font-normal text-gray-500 ml-0.5">分</span></div>
+                        <div class="flex items-stretch gap-2 mb-1 pb-1 border-b border-gray-100 last:border-0 last:pb-0">
+                            <div class="w-[130px] shrink-0 flex flex-col justify-center">
+                                <div class="text-[11.5px] font-bold text-gray-800 leading-tight">${ind.name}</div>
+                                <div class="text-[15px] font-black text-indigo-600 mt-0.5">${ind.score}<span class="text-[9px] font-normal text-gray-500 ml-0.5">分</span></div>
                             </div>
-                            <div class="flex flex-col border-l-2 border-indigo-200 pl-2 flex-1">
-                                <span class="text-[10px] text-gray-400 mb-0.5 leading-none">${ind.desc}</span>
-                                <span class="text-[12px] text-gray-700 font-medium leading-tight">${ind.comment}</span>
+                            <div class="flex flex-col border-l-2 border-indigo-200 pl-3 flex-1 justify-center">
+                                <span class="text-[9px] text-gray-400 mb-0.5 leading-none">${ind.desc}</span>
+                                <span class="text-[11.5px] text-gray-700 font-medium leading-snug">${ind.comment}</span>
                             </div>
                         </div>
                     `).join('');
 
                     dimHtml += `
-                        <div class="border border-indigo-100 rounded-lg p-2 bg-white shadow-sm print-break-inside-avoid">
-                            <div class="flex justify-between items-center border-b border-indigo-100 pb-1 mb-1.5 bg-indigo-50/50 px-2 rounded-t-md">
-                                <span class="font-bold text-indigo-800 text-[13px]">${dim.name}</span>
-                                <span class="font-black text-indigo-600 text-[14px]">${dim.score} <span class="text-[9px] font-normal text-gray-500">分</span></span>
+                        <div class="border border-indigo-100 rounded-lg p-1.5 bg-white shadow-sm print-break-inside-avoid">
+                            <div class="flex justify-between items-center border-b border-indigo-100 pb-0.5 mb-1 bg-indigo-50/50 px-2 rounded-t-sm">
+                                <span class="font-bold text-indigo-800 text-[12px]">${dim.name}</span>
+                                <span class="font-black text-indigo-600 text-[13px]">${dim.score} <span class="text-[8px] font-normal text-gray-500">分</span></span>
                             </div>
                             <div class="px-1">${indHtml}</div>
                         </div>
@@ -613,36 +618,36 @@
                 });
                 dimHtml += '</div>';
 
-                // A/B/C 三等分完美排版設計 (專為 A4 打造)
+                // A/B/C 三等分完美排版設計 (頂部高度壓縮)
                 const page = document.createElement('div');
-                page.className = 'print-page w-full max-w-[19cm] mx-auto font-sans text-gray-800 bg-white pt-2';
+                page.className = 'print-page';
                 page.innerHTML = `
-                    <div class="flex items-center justify-between border border-indigo-100 rounded-xl p-3 mb-2 bg-indigo-50/30 print-break-inside-avoid">
+                    <div class="flex items-center justify-between border border-indigo-100 rounded-xl p-2 mb-1 bg-indigo-50/30 print-break-inside-avoid">
                         <!-- A: 頭像名字 -->
                         <div class="flex flex-col items-center justify-center w-[25%] border-r border-indigo-200">
-                            <div class="w-14 h-14 rounded-full border-2 border-white overflow-hidden flex justify-center items-center text-2xl bg-gray-100 shadow-sm mb-1">
+                            <div class="w-12 h-12 rounded-full border-2 border-white overflow-hidden flex justify-center items-center text-xl bg-gray-100 shadow-sm mb-1">
                                 ${getAvatarHtml(s, '')}
                             </div>
-                            <h2 class="text-lg font-bold text-gray-800">${s.fullname || s.name}</h2>
+                            <h2 class="text-[15px] font-bold text-gray-800 leading-none">${s.fullname || s.name}</h2>
                         </div>
                         <!-- B: 總合評分 -->
                         <div class="flex flex-col items-center justify-center w-[25%] border-r border-indigo-200 px-2">
-                            <span class="text-[10px] text-gray-500 font-bold block leading-none mb-1">總合表現評分</span>
-                            <span class="text-5xl font-black text-indigo-600 leading-none">${s.totalScore}</span>
+                            <span class="text-[9px] text-gray-500 font-bold block leading-none mb-1">總合表現評分</span>
+                            <span class="text-4xl font-black text-indigo-600 leading-none">${s.totalScore}</span>
                         </div>
                         <!-- C: 雷達圖 -->
-                        <div class="w-[50%] flex justify-center items-center h-[130px]">
+                        <div class="w-[50%] flex justify-center items-center h-[115px]">
                             <canvas id="printRadar-${index}"></canvas>
                         </div>
                     </div>
                     
                     ${dimHtml}
                     
-                    <div class="mt-2 p-3 bg-indigo-50 rounded-lg text-sm font-bold text-indigo-900 border border-indigo-200 print-break-inside-avoid flex gap-2 items-start">
-                        <span class="text-lg leading-none mt-0.5">💡</span>
+                    <div class="mt-1 p-2 bg-indigo-50 rounded-lg text-sm font-bold text-indigo-900 border border-indigo-200 print-break-inside-avoid flex gap-2 items-start">
+                        <span class="text-base leading-none mt-0.5">💡</span>
                         <div>
-                            <div class="text-[11px] text-indigo-500 mb-0.5 leading-none">AI 總結與建議：</div>
-                            <div class="text-[13px] font-medium leading-snug">${s.overallComment}</div>
+                            <div class="text-[10px] text-indigo-500 mb-0.5 leading-none">AI 總結與建議：</div>
+                            <div class="text-[12px] font-medium leading-snug">${s.overallComment}</div>
                         </div>
                     </div>
                 `;
@@ -661,6 +666,7 @@
                         }]
                     },
                     options: {
+                        devicePixelRatio: 4, // 🔥 強制 4 倍解析度渲染，解決印表機雷達圖模糊問題！
                         animation: false, 
                         responsive: true, maintainAspectRatio: false,
                         scales: { r: { min: 0, max: 100, ticks: { stepSize: 20, display: false }, pointLabels: { font: { size: 9, weight: 'bold' }, color: '#4B5563' } } },
@@ -670,6 +676,7 @@
                 window.printCharts.push(chart);
             });
 
+            // 確保高解析圖表畫完後呼叫列印
             setTimeout(() => { window.print(); }, 800);
         };
 
