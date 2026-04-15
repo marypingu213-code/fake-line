@@ -33,12 +33,11 @@
         #printArea { position: absolute; left: -9999px; top: -9999px; width: 21cm; visibility: hidden; z-index: -1; background: white; }
         
         @media print {
-            @page { size: A4 portrait; margin: 8mm; } /* 給予印表機安全的邊距，避免裁切邊緣 */
+            @page { size: A4 portrait; margin: 8mm; } 
             body { background-color: white !important; overflow: visible !important; height: auto !important; width: 100% !important; margin: 0; padding: 0; }
             body > div:not(#printArea) { display: none !important; }
             #printArea { display: block !important; position: relative !important; left: 0 !important; top: 0 !important; width: 100% !important; visibility: visible !important; margin: 0; padding: 0; }
             
-            /* 每張獨立一頁，不再使用隱藏溢出的暴力做法，改採彈性滿版 */
             .print-page { 
                 page-break-after: always; break-after: page; 
                 padding: 0; margin: 0 auto; box-sizing: border-box; 
@@ -172,7 +171,6 @@
                 <button onclick="closeDetailModal()" class="text-gray-400 hover:text-gray-800 p-1 bg-gray-100 rounded-full active:scale-95"><svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button>
             </div>
             
-            <!-- Web: A(頭像名字) | B(總分) | C(雷達圖) 三等分並排 -->
             <div class="flex items-center justify-between bg-indigo-50/30 border border-indigo-100 rounded-2xl p-4 mb-4 shrink-0 mt-6 sm:mt-0">
                 <div class="flex flex-col items-center justify-center w-[25%] border-r-2 border-indigo-100">
                     <div id="detailAvatar" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-white overflow-hidden flex justify-center items-center text-3xl bg-gray-100 shadow-sm mb-1"></div>
@@ -203,7 +201,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, updateDoc, arrayUnion, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBOr41Km1V003CsxdETTNB4LEqFnPj3OWM",
@@ -238,36 +236,50 @@
 
         const docRef = doc(db, 'chatSessions', sessionId);
 
+        // 🚀 重構點：基礎資料庫初始化
+        async function initCloudDoc() {
+            await setDoc(docRef, { title: chatTitle, speakers, messages, isEnded: isChatEnded, updatedAt: new Date().toISOString() }, { merge: true });
+        }
+
+        // 🚀 重構點：防覆寫的精準更新函式
+        async function syncUpdate(updates) {
+            if (isCloudSyncing) return;
+            updates.updatedAt = new Date().toISOString();
+            try {
+                await updateDoc(docRef, updates);
+            } catch (e) {
+                // 若文件尚不存在，則執行初始化
+                await initCloudDoc();
+            }
+        }
+
         signInAnonymously(auth).then(() => {
             onSnapshot(docRef, (docSnap) => {
                 if (docSnap.exists()) {
                     isCloudSyncing = true;
-                    const data = docSnap.data();
-                    chatTitle = data.title || chatTitle;
-                    speakers = data.speakers || speakers;
-                    messages = data.messages || messages;
-                    isChatEnded = data.isEnded || false; 
-                    
-                    document.getElementById('chatTitle').textContent = chatTitle;
-                    document.getElementById('memberCount').textContent = speakers.length;
-                    
-                    window.toggleInputLock(); 
-                    
-                    renderMessages();
-                    updateLockedUI();
-                    if (!document.getElementById('memberSidebar').classList.contains('sm:w-0')) renderSidebarSpeakers();
-                    scrollToBottom();
-                    isCloudSyncing = false;
-                } else { saveToCloud(); }
+                    try {
+                        const data = docSnap.data();
+                        chatTitle = data.title || chatTitle;
+                        speakers = data.speakers || speakers;
+                        messages = data.messages || messages;
+                        isChatEnded = data.isEnded || false; 
+                        
+                        document.getElementById('chatTitle').textContent = chatTitle;
+                        document.getElementById('memberCount').textContent = speakers.length;
+                        
+                        window.toggleInputLock(); 
+                        renderMessages();
+                        updateLockedUI();
+                        if (!document.getElementById('memberSidebar').classList.contains('sm:w-0')) renderSidebarSpeakers();
+                        scrollToBottom();
+                    } finally {
+                        isCloudSyncing = false;
+                    }
+                } else { initCloudDoc(); }
                 document.getElementById('syncStatusDot').className = 'status-dot status-online';
                 document.getElementById('syncStatusText').textContent = '已連線 (即時同步)';
             });
         });
-
-        async function saveToCloud() {
-            if (isCloudSyncing) return;
-            await setDoc(docRef, { title: chatTitle, speakers, messages, isEnded: isChatEnded, updatedAt: new Date().toISOString() }, { merge: true });
-        }
 
         window.toggleInputLock = () => {
             const input = document.getElementById('chatInput');
@@ -331,8 +343,23 @@
         window.closeMemberSidebar = () => { const s = document.getElementById('memberSidebar'); s.classList.add('translate-x-full', 'sm:w-0', 'opacity-0'); s.classList.remove('translate-x-0', 'sm:w-80', 'opacity-100', 'sm:ml-4'); document.getElementById('sidebarOverlay').classList.add('hidden');};
 
         window.lockSpeaker = (id) => { const s = speakers.find(x => x.id === id); if (confirm(`鎖定身分為「${s.fullname || s.name}」嗎？`)) { currentSpeakerId = id; isLocked = true; closeMemberSidebar(); updateLockedUI(); } };
-        window.addNewSpeaker = () => { speakers.push({ id: 'user_' + Date.now(), name: '新成員', fullname: '新成員', icon: '👤', image: null, isMe: false }); renderSidebarSpeakers(); saveToCloud(); };
-        window.updateSpeakerName = (id, val) => { const s = speakers.find(x => x.id === id); if (s && val.trim()) { s.fullname = val.trim(); s.name = val.trim().substring(0, 5); renderMessages(); saveToCloud(); } };
+        
+        window.addNewSpeaker = () => { 
+            const newSpeaker = { id: 'user_' + Date.now(), name: '新成員', fullname: '新成員', icon: '👤', image: null, isMe: false };
+            speakers.push(newSpeaker); 
+            renderSidebarSpeakers(); 
+            syncUpdate({ speakers }); 
+        };
+        
+        window.updateSpeakerName = (id, val) => { 
+            const s = speakers.find(x => x.id === id); 
+            if (s && val.trim()) { 
+                s.fullname = val.trim(); s.name = val.trim().substring(0, 5); 
+                renderMessages(); 
+                syncUpdate({ speakers }); 
+            } 
+        };
+        
         window.triggerAvatarUpload = (id) => { window.editingId = id; document.getElementById('avatarUploader').click(); };
 
         document.getElementById('avatarUploader').onchange = (e) => {
@@ -342,7 +369,8 @@
                     const cvs = document.createElement('canvas'); const ctx = cvs.getContext('2d'); cvs.width = 150; cvs.height = 150;
                     ctx.drawImage(img, 0, 0, 150, 150);
                     const s = speakers.find(x => x.id === window.editingId); s.image = cvs.toDataURL('image/jpeg', 0.7);
-                    renderSidebarSpeakers(); saveToCloud();
+                    renderSidebarSpeakers(); 
+                    syncUpdate({ speakers }); 
                 };
             }; r.readAsDataURL(f);
         };
@@ -359,13 +387,20 @@
         window.closeQrModal = () => { const m = document.getElementById('qrModal'); m.classList.add('hidden'); m.classList.remove('flex'); };
         window.copyLink = () => { navigator.clipboard.writeText(shareUrl).then(() => alert("網址已複製！")); };
 
+        // 🚀 核心修復：使用 arrayUnion 確保學生與老師同時發言時不會覆寫對方
         window.sendMessage = () => {
             if (isChatEnded) return; 
             const i = document.getElementById('chatInput'); const t = i.value.trim(); if(!t) return;
             const time = new Date().toLocaleTimeString('zh-TW', { timeZone: 'Asia/Taipei', hour12: false, hour: '2-digit', minute: '2-digit' });
-            messages.push({ speakerId: currentSpeakerId, text: t.replace(/\n/g, '<br>'), time });
+            
+            const newMsg = { speakerId: currentSpeakerId, text: t.replace(/\n/g, '<br>'), time };
+            messages.push(newMsg); // 更新本地畫面
+            
             i.value = ''; window.toggleSendIcon(); document.getElementById('emojiPicker').classList.add('hidden');
-            renderMessages(); scrollToBottom(); saveToCloud();
+            renderMessages(); scrollToBottom(); 
+            
+            // 獨立只更新 messages 陣列，不影響其他資料
+            syncUpdate({ messages: arrayUnion(newMsg) });
         };
 
         window.toggleSendIcon = () => {
@@ -374,7 +409,13 @@
             else { m.classList.remove('hidden'); p.classList.add('hidden'); }
         };
 
-        window.renameChat = () => { const n = prompt("輸入群組名稱：", chatTitle); if(n && n.trim()) { chatTitle = n.trim(); document.getElementById('chatTitle').textContent = chatTitle; saveToCloud(); } };
+        window.renameChat = () => { 
+            const n = prompt("輸入群組名稱：", chatTitle); 
+            if(n && n.trim()) { 
+                chatTitle = n.trim(); document.getElementById('chatTitle').textContent = chatTitle; 
+                syncUpdate({ title: chatTitle }); 
+            } 
+        };
 
         // ================= 5 向度 15 指標深度 AI 評估與雷達圖系統 =================
         window.currentStatsData = [];
@@ -392,7 +433,7 @@
             
             if (!isChatEnded) {
                 isChatEnded = true;
-                saveToCloud();
+                syncUpdate({ isEnded: true }); // 同步鎖定狀態給所有學生
                 window.toggleInputLock();
             }
 
@@ -524,7 +565,6 @@
             s.dimensions.forEach((dim, idx) => {
                 let indicatorsHtml = '';
                 dim.indicators.forEach(ind => {
-                    // Web: (名稱+分數) 拉出左方空間 | (固定描述+動態評論)
                     indicatorsHtml += `
                         <div class="flex items-center gap-3 mb-2 pb-2 border-b border-gray-100 last:border-0 last:pb-0">
                             <div class="w-[130px] shrink-0 text-[13px] font-bold text-gray-800 leading-tight">
@@ -589,7 +629,6 @@
             window.printCharts = [];
 
             targetStudents.forEach((s, index) => {
-                // 列印版指標排版：極致緊湊的三欄式設計 (Name | Score | Descriptions)
                 let dimHtml = '<div class="flex flex-col gap-1 mt-2">';
                 s.dimensions.forEach(dim => {
                     let indHtml = dim.indicators.map(ind => `
@@ -619,24 +658,20 @@
                 });
                 dimHtml += '</div>';
 
-                // A/B/C 三等分完美排版設計 (自然高度不裁切)
                 const page = document.createElement('div');
                 page.className = 'print-page';
                 page.innerHTML = `
                     <div class="flex items-center justify-between border border-indigo-100 rounded-xl p-2 mb-1 bg-indigo-50/30 print-break-inside-avoid">
-                        <!-- A: 頭像名字 -->
                         <div class="flex flex-col items-center justify-center w-[25%] border-r border-indigo-200">
                             <div class="w-12 h-12 rounded-full border-2 border-white overflow-hidden flex justify-center items-center text-xl bg-gray-100 shadow-sm mb-1">
                                 ${getAvatarHtml(s, '')}
                             </div>
                             <h2 class="text-[15px] font-bold text-gray-800 leading-none">${s.fullname || s.name}</h2>
                         </div>
-                        <!-- B: 總合評分 -->
                         <div class="flex flex-col items-center justify-center w-[25%] border-r border-indigo-200 px-2">
                             <span class="text-[9px] text-gray-500 font-bold block leading-none mb-1">總合表現評分</span>
                             <span class="text-4xl font-black text-indigo-600 leading-none">${s.totalScore}</span>
                         </div>
-                        <!-- C: 雷達圖 -->
                         <div class="w-[50%] flex justify-center items-center h-[120px]">
                             <canvas id="printRadar-${index}"></canvas>
                         </div>
@@ -667,7 +702,7 @@
                         }]
                     },
                     options: {
-                        devicePixelRatio: 4, // 🔥 強制 4 倍解析度渲染，解決印表機雷達圖模糊問題！
+                        devicePixelRatio: 4, 
                         animation: false, 
                         responsive: true, maintainAspectRatio: false,
                         scales: { r: { min: 0, max: 100, ticks: { stepSize: 20, display: false }, pointLabels: { font: { size: 9, weight: 'bold' }, color: '#4B5563' } } },
@@ -677,7 +712,6 @@
                 window.printCharts.push(chart);
             });
 
-            // 確保高解析圖表畫完後呼叫列印
             setTimeout(() => { window.print(); }, 800);
         };
 
@@ -687,7 +721,7 @@
                 isChatEnded = false;
                 window.toggleInputLock();
                 renderMessages(); 
-                saveToCloud(); 
+                syncUpdate({ messages: [], isEnded: false }); 
                 window.closeStatsModal(); 
             } 
         };
@@ -722,14 +756,15 @@
             document.getElementById('jsonUploader').onchange = (e) => {
                 const file = e.target.files[0]; if (!file) return;
                 const reader = new FileReader();
-                reader.onload = (evt) => {
+                reader.onload = async (evt) => {
                     try {
                         const data = JSON.parse(evt.target.result);
                         if (data.messages && data.speakers) {
                             chatTitle = data.title || "載入的對話"; speakers = data.speakers; messages = data.messages;
                             isChatEnded = data.isEnded || false;
                             document.getElementById('chatTitle').textContent = chatTitle; document.getElementById('memberCount').textContent = speakers.length;
-                            renderSidebarSpeakers(); renderMessages(); window.scrollToBottom(); window.toggleInputLock(); saveToCloud(); 
+                            renderSidebarSpeakers(); renderMessages(); window.scrollToBottom(); window.toggleInputLock(); 
+                            await initCloudDoc(); // 覆蓋雲端資料 
                             alert("✅ 成功載入對話紀錄！所有連線設備已同步更新。");
                         } else alert("❌ 檔案格式不正確，請選擇由本系統匯出的 .json 檔案");
                     } catch (err) { alert("❌ 讀取失敗，格式錯誤"); }
@@ -743,7 +778,7 @@
                 '❤️','🧡','💛','💚','💙','🩵','💜','🤎','🖤','🤍','💔','❣️','💕','💞','💓','💗','💖','💘','💝','✨','🌟','💫','💥','💢','💦','💨','💬','💭','💤',
                 '🎉','🎊','🔥','💯','❓','❗️','❕','❔','✅','❌','⭕','⛔','📛','🚫','🆗','🆙','🆒','🆕','🆓',
                 '🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐻‍❄️','🐨','🐯','🦁','🐮','🐷','🐸','🐵','🐔','🐧','🐦','🐤','🦆','🦅','🦉','🦇','🐺','🐗','🐴','🦄','🐝','🐛','🦋',
-                '🍏','🍎','🍊','🍋','🍌','🍉','🍇','🍓','🫐','🍈','🍒','🍑','🥭','🍍','🥥','🥝','🍅','🍆','🥑','🥦','🥬','🥒','定的🌽','🥕','🥔','🍠','🥐','🥯','🍞','🥖','🧀','🥚','🍳','🥞','🧇','🥓','🥩','🍗','🍖','🌭','🍔','🍟','🍕','🥪','🌮','🥗','🥘','🍝','🍜','🍲','🍛','🍣','🍱','🥟','🍤','🍙','🍚','🍘','🍢','🍡','🍧','🍨','🍦','🥧','🧁','🍰','🎂','🍮','🍭','🍬','🍫','🍿','🍩','🍪',
+                '🍏','🍎','🍊','🍋','🍌','🍉','🍇','🍓','🫐','🍈','🍒','🍑','🥭','🍍','🥥','🥝','🍅','🍆','🥑','🥦','🥬','🥒','🌽','🥕','🥔','🍠','🥐','🥯','🍞','🥖','🧀','🥚','🍳','🥞','🧇','🥓','🥩','🍗','🍖','🌭','🍔','🍟','🍕','🥪','🌮','🥗','🥘','🍝','🍜','🍲','🍛','🍣','🍱','🥟','🍤','🍙','🍚','🍘','🍢','🍡','🍧','🍨','🍦','🥧','🧁','🍰','🎂','🍮','🍭','🍬','🍫','🍿','🍩','🍪',
                 '🚗','🚕','🚙','🚌','🚎','🏎','🚓','🚑','🚒','🚐','🚚','🚛','🚜','🏫','☀️','🌤','⛅️','🌥','☁️','🌦','🌧','⛈','🌩','🌨','❄️','☃️','⛄️','🌬','💨','☔️'
             ];
             ems.forEach(e => { const span = document.createElement('span'); span.className = "cursor-pointer p-1 text-2xl hover:scale-125 transition-transform"; span.textContent = e; span.onclick = () => { if(!isChatEnded){ i.value += e; window.toggleSendIcon(); } }; document.getElementById('emojiGrid').appendChild(span); });
